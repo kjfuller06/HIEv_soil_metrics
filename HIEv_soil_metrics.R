@@ -1,23 +1,10 @@
-#Start####
-#load packages for downloadTOA5 function
-library(tidyr)
-library(gdata)
-library(devtools)
-install_bitbucket("remkoduursma/HIEv")
-library(HIEv)
-setToken("")
-library(reshape2)
-library(doBy)
-
 #write start date for first analysis
 sD<-as.Date("2018-05-01")
 #Write end date for first analysis
 eD<-as.Date("2019-05-01")
 
-setwd("W:/PERSONAL/Fuller_K/PACE/Presentation materials and data visualization/Environmental Data from HIEv/Working directory/dump .dat files")
-
 #Irrigation####
-Irrig<- (downloadTOA5("PACE_AUTO_ALL_IRRIG_R_", startDate=sD, endDate=eD))[,c(1,4:6)]
+Irrig<- (downloadTOA5("PACE_AUTO_ALL_IRRIG_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,4:6)]
 
 #Rename columns
 names(Irrig)<-c("DateTime","Plot","Treatment","Irrigation")
@@ -39,14 +26,13 @@ rm('Irrig','IrrigMax')
 
 #Soil Moisture####
 #only keep moisture variables of interest
-s1 <- (downloadTOA5("PACE_AUTO_S1_BLWGRND_R_", startDate=sD, endDate=eD))[,c(1,3:18)]
-s2 <- (downloadTOA5("PACE_AUTO_S2_BLWGRND_R_", startDate=sD, endDate=eD))[,c(1,3:18)]
-s3 <- (downloadTOA5("PACE_AUTO_S3_BLWGRND_R_", startDate=sD, endDate=eD))[,c(1,3:18)]
-s4 <- (downloadTOA5("PACE_AUTO_S4_BLWGRND_R_", startDate=sD, endDate=eD))[,c(1,3:18)]
-s5 <- (downloadTOA5("PACE_AUTO_S5_BLWGRND_R_", startDate=sD, endDate=eD))[,c(1,3:18)]
-s6 <- (downloadTOA5("PACE_AUTO_S6_BLWGRND_R_", startDate=sD, endDate=eD))[,c(1,3:18)]
+s1 <- (downloadTOA5("PACE_AUTO_S1_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,3:18)]
+s2 <- (downloadTOA5("PACE_AUTO_S2_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,3:18)]
+s3 <- (downloadTOA5("PACE_AUTO_S3_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,3:18)]
+s4 <- (downloadTOA5("PACE_AUTO_S4_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,3:18)]
+s5 <- (downloadTOA5("PACE_AUTO_S5_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,3:18)]
+s6 <- (downloadTOA5("PACE_AUTO_S6_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,3:18)]
 
-setwd("W:/PERSONAL/Fuller_K/PACE/Presentation materials and data visualization/Environmental Data from HIEv/Working directory/Figures/Standard Error")
 #Rename columns
 names(s1)<-c("DateTime","1RYEUpperAmbDrt",
              "2RYEUpperAmbCon",
@@ -619,16 +605,14 @@ sD<-as.Date("2018-05-01")
 eD<-as.Date("2019-05-01")
 
 #Soil Temperature####
-setwd("W:/PERSONAL/Fuller_K/PACE/Presentation materials and data visualization/Environmental Data from HIEv/Working directory/dump .dat files")
 #only keep variables of interest
-s1 <- (downloadTOA5("PACE_AUTO_S1_BLWGRND_R_", startDate=sD, endDate=eD))[,c(1,19:26)] #only keep variables of interest
-s2 <- (downloadTOA5("PACE_AUTO_S2_BLWGRND_R_", startDate=sD, endDate=eD))[,c(1,19:26)]
-s3 <- (downloadTOA5("PACE_AUTO_S3_BLWGRND_R_", startDate=sD, endDate=eD))[,c(1,19:26)]
-s4 <- (downloadTOA5("PACE_AUTO_S4_BLWGRND_R_", startDate=sD, endDate=eD))[,c(1,19:26)]
-s5 <- (downloadTOA5("PACE_AUTO_S5_BLWGRND_R_", startDate=sD, endDate=eD))[,c(1,19:26)]
-s6 <- (downloadTOA5("PACE_AUTO_S6_BLWGRND_R_", startDate=sD, endDate=eD))[,c(1,19:26)]
+s1 <- (downloadTOA5("PACE_AUTO_S1_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,19:26)] #only keep variables of interest
+s2 <- (downloadTOA5("PACE_AUTO_S2_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,19:26)]
+s3 <- (downloadTOA5("PACE_AUTO_S3_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,19:26)]
+s4 <- (downloadTOA5("PACE_AUTO_S4_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,19:26)]
+s5 <- (downloadTOA5("PACE_AUTO_S5_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,19:26)]
+s6 <- (downloadTOA5("PACE_AUTO_S6_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,19:26)]
 
-setwd("W:/PERSONAL/Fuller_K/PACE/Presentation materials and data visualization/Environmental Data from HIEv/Working directory/Figures/Standard Error")
 #Rename columns
 names(s1)<-c("DateTime","3LUCAmbDrt",
              "3FESAmbDrt",
