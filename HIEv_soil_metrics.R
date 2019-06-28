@@ -1,7 +1,7 @@
 #write start date for first analysis
-sD<-as.Date("2018-05-01")
+sD<-as.Date("2018-05-21")
 #Write end date for first analysis
-eD<-as.Date("2019-05-01")
+eD<-as.Date("2019-05-25")
 
 #Irrigation####
 Irrig<- (downloadTOA5("PACE_AUTO_ALL_IRRIG_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,4:6)]
@@ -162,8 +162,12 @@ s1plot$Shelter<-as.factor(s1plot$Shelter)
 ##average and standard error by treatment
 s1plot<-na.omit(s1plot)
 s1plot$Date<-as.Date(s1plot$DateTime)
-s1plot<-aggregate(data=s1plot,value~Date+Treatment+Shelter+Plot,FUN=mean)
-s1plot<-aggregate(data=s1plot,value~Date+Treatment,FUN=function(x) c(avg=mean(x),upper=mean(x)+sd(x)/sqrt(length(x)),lower=mean(x)-sd(x)/sqrt(length(x))))
+s1plot<-aggregate(data=s1plot,value~Date+Treatment+Shelter+Plot,FUN=mean,simplify=TRUE,drop=TRUE)
+s1plot<-aggregate(data=s1plot,value~Date+Treatment,FUN=function(x) c(avg=mean(x),upper=mean(x)+sd(x)/sqrt(length(x)),lower=mean(x)-sd(x)/sqrt(length(x))),simplify=TRUE,drop=TRUE)
+s1plot2<-data.frame(s1plot[["value"]])
+s1plot$value<-s1plot2$avg
+s1plot$upper<-s1plot2$upper
+s1plot$lower<-s1plot2$lower
 
 #rename columns
 s1plot$Treatment<-factor(s1plot$Treatment,levels=c("UpperAmbCon","LowerAmbCon","UpperAmbDrt","LowerAmbDrt",
@@ -188,7 +192,7 @@ par(mfrow=c(2,1),oma=c(4,3,3,0))
 
 #Soil moisture plot
 #Upper sensors
-par(mar = c(0,0,0,3))
+par(mar =c(0,0,0,3))
 plot(df1$value ~ df1$Date, 
      type = "l",lwd=0.75,
      xaxt='n',
@@ -244,7 +248,7 @@ plot(Irrig1$Irrigation~Irrig1$Date,
      xlab="",
      ylim = c(0,125))
 par(new=TRUE)
-with(Irrig2[Irrig2$Date>"2018-08-22"],plot(Irrigation~Date,
+with(Irrig2[Irrig2$Date>"2018-08-22",],plot(Irrigation~Date,
                                            type="h",
                                            col=2,
                                            axes=FALSE,
