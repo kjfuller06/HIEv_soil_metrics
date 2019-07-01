@@ -1,28 +1,24 @@
 #write start date for first analysis
-sD<-as.Date("2018-05-01")
+sD<-as.Date("2018-05-21")
 #Write end date for first analysis
-eD<-as.Date("2019-05-01")
+eD<-as.Date("2019-05-25")
 
 #Irrigation####
 Irrig<- (downloadTOA5("PACE_AUTO_ALL_IRRIG_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,4:6)]
 
 #Rename columns
 names(Irrig)<-c("DateTime","Plot","Treatment","Irrigation")
-Irrig$Date<-date(Irrig$DateTime)
+Irrig$Date<-as.Date(Irrig$DateTime)
 
 #force Treatment to be a factor
 Irrig$Treatment<-as.factor(Irrig$Treatment)
-#reorder data frame by date and treatment
 Irrig<-Irrig[order(Irrig$Date,Irrig$Treatment),]
-#generate mean irrigation values by date and treatment
-IrrigMax=data.table(Irrig)
-IrrigMax = IrrigMax[,list(Irrigation = mean(Irrigation)), 'Treatment,Date']
+Irrig<-aggregate(data=Irrig,Irrigation~Date+Treatment,FUN=mean)
+levels(Irrig$Treatment)<-c("Con","Drt","Con","Drt")
 
 #subset data by treatment
-Irrig1<-subset(IrrigMax, Treatment == "1")
-Irrig2<-subset(IrrigMax[IrrigMax$Date>"2018-05-31"&IrrigMax$Date<"2018-12-01"], Treatment == "2")
-
-rm('Irrig','IrrigMax')
+Irrig1<-subset(Irrig, Treatment == "Con")
+Irrig2<-subset(Irrig[Irrig$Date>"2018-05-31"&Irrig$Date<"2018-12-01",], Treatment == "Drt")
 
 #Soil Moisture####
 #only keep moisture variables of interest
@@ -150,60 +146,43 @@ s5$Shelter<-5
 s6<-melt(s6,id.vars="DateTime")
 s6$Shelter<-6
 
+s1<-rbind(s1,s2,s3,s4,s5,s6)
+
 #LUC####
 x<-"LUC"
 #create new dfs based on species
-s1plot<-rbind(s1[grep(x, s1$variable),])
-s2plot<-rbind(s2[grep(x, s2$variable),])
-s3plot<-rbind(s3[grep(x, s3$variable),])
-s4plot<-rbind(s4[grep(x, s4$variable),])
-s5plot<-rbind(s5[grep(x, s5$variable),])
-s6plot<-rbind(s6[grep(x, s6$variable),])
-
-#Separate treatments and other variables into separate columns
+s1plot<-s1[grep(x, s1$variable),]
 s1plot<-separate(data=s1plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s2plot<-separate(data=s2plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s3plot<-separate(data=s3plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s4plot<-separate(data=s4plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s5plot<-separate(data=s5plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s6plot<-separate(data=s6plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-
-##combine all LUC data
-allplot<-rbind(s1plot,s2plot,s3plot,s4plot,s5plot,s6plot)
 
 ##recognize variables as factors instead of characters
-allplot$Treatment<-as.factor(allplot$Treatment)
-allplot$Species<-as.factor(allplot$Species)
-allplot$Plot<-as.factor(allplot$Plot)
-allplot$Shelter<-as.factor(allplot$Shelter)
+s1plot$Species<-as.factor(s1plot$Species)
+s1plot$Plot<-as.factor(s1plot$Plot)
+s1plot$Shelter<-as.factor(s1plot$Shelter)
 
 ##average and standard error by treatment
-allsum = data.table(allplot)
-allsum<-na.omit(allsum)
-allsum$Date<-as.Date(allsum$DateTime)
-allsum = allsum[,list(value = mean(value)), 'Plot,Shelter,Treatment,Date']
-allsum = allsum[,list(avg_value = mean(value), ste_value = sd(value)/sqrt(length(value))), 'Treatment,Date']
-allsum$upper<-allsum$avg_value+allsum$ste_value
-allsum$lower<-allsum$avg_value-allsum$ste_value
+s1plot<-na.omit(s1plot)
+s1plot$Date<-as.Date(s1plot$DateTime)
+s1plot<-aggregate(data=s1plot,value~Date+Treatment+Shelter+Plot,FUN=mean,simplify=TRUE,drop=TRUE)
+s1plot<-aggregate(data=s1plot,value~Date+Treatment,FUN=function(x) c(avg=mean(x),upper=mean(x)+sd(x)/sqrt(length(x)),lower=mean(x)-sd(x)/sqrt(length(x))),simplify=TRUE,drop=TRUE)
+s1plot2<-data.frame(s1plot[["value"]])
+s1plot$value<-s1plot2$avg
+s1plot$upper<-s1plot2$upper
+s1plot$lower<-s1plot2$lower
 
 #rename columns
-names(allsum)<-c("Treatment","Date","value","stderror","upper","lower")
-allsum$Treatment<-factor(allsum$Treatment,levels=c("UpperAmbCon","LowerAmbCon","UpperAmbDrt","LowerAmbDrt",
+s1plot$Treatment<-factor(s1plot$Treatment,levels=c("UpperAmbCon","LowerAmbCon","UpperAmbDrt","LowerAmbDrt",
                                                    "UpperEleCon","LowerEleCon","UpperEleDrt","LowerEleDrt"))
-allsum<-allsum[order(Date,Treatment),]
+s1plot<-s1plot[order(s1plot$Date,s1plot$Treatment),]
 
-ymax<-max(allsum$value,na.rm=T) #use same temperature range across temperature charts
-ymin<-min(allsum$value,na.rm=T) #there is an NA value in a soil temp sensor data stream that is stopping the script
+ymax<-max(s1plot$value,na.rm=T) #use same temperature range across temperature charts
+ymin<-min(s1plot$value,na.rm=T) #there is an NA value in a soil temp sensor data stream that is stopping the script
 
 ##subset each treatment to a different data set
-df1<-subset(allsum, Treatment == "UpperAmbCon")
-df2<-subset(allsum, Treatment == "UpperAmbDrt")
-df3<-subset(allsum, Treatment == "UpperEleCon")
-df4<-subset(allsum, Treatment == "UpperEleDrt")
-df5<-subset(allsum, Treatment == "LowerAmbCon")
-df6<-subset(allsum, Treatment == "LowerAmbDrt")
-df7<-subset(allsum, Treatment == "LowerEleCon")
-df8<-subset(allsum, Treatment == "LowerEleDrt")
+n<-levels(s1plot$Treatment)
+for(i in n){
+   df1<-subset(s1plot, Treatment == i)
+   assign(paste("df",match(i,n),sep=""),df1)
+}
 
 #export graphs to tiff----
 tiff(file = paste("FIELD",x,"Daily Soil_Moisture",eD, ".tiff"), width = 3200, height = 2100, units = "px", res = 400) 
@@ -213,7 +192,7 @@ par(mfrow=c(2,1),oma=c(4,3,3,0))
 
 #Soil moisture plot
 #Upper sensors
-par(mar = c(0,0,0,3))
+par(mar =c(0,0,0,3))
 plot(df1$value ~ df1$Date, 
      type = "l",lwd=0.75,
      xaxt='n',
@@ -269,7 +248,7 @@ plot(Irrig1$Irrigation~Irrig1$Date,
      xlab="",
      ylim = c(0,125))
 par(new=TRUE)
-with(Irrig2[Irrig2$Date>"2018-08-22"],plot(Irrigation~Date,
+with(Irrig2[Irrig2$Date>"2018-08-22",],plot(Irrigation~Date,
                                            type="h",
                                            col=2,
                                            axes=FALSE,
@@ -482,14 +461,14 @@ plot(Irrig1$Irrigation~Irrig1$Date,
      ylim = c(0,150))
 par(new=TRUE)
 with(Irrig2[Irrig2$Date>"2018-08-22 00:00:00"],plot(Irrig2$Irrigation~Irrig2$Date,
-                                                        type="h",
-                                                        col=2,
-                                                        axes=FALSE,
-                                                        xaxt='n',
-                                                        ylab="",
-                                                        xlab="",
-                                                        ylim = c(0,150),
-                                                        xlim=c(min(Irrig1$Date),max(Irrig1$Date))))
+                                                    type="h",
+                                                    col=2,
+                                                    axes=FALSE,
+                                                    xaxt='n',
+                                                    ylab="",
+                                                    xlab="",
+                                                    ylim = c(0,150),
+                                                    xlim=c(min(Irrig1$Date),max(Irrig1$Date))))
 corners2 = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 par(xpd = TRUE) #Draw outside plot area
 text(x = corners2[2]+corners2[2]/850, y = mean(corners2[3:4])-66, "Irrigation\n(mm)",srt=270,cex=0.6)
