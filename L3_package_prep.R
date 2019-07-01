@@ -5,7 +5,7 @@
 library(tidyr)
 library(gdata)
 library(devtools)
-#install_bitbucket("remkoduursma/HIEv")
+install_bitbucket("remkoduursma/HIEv")
 library(HIEv)
 setToken("vyyk6yyDYMPwaymASW7Q")
 library(reshape2)
