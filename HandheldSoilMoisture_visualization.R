@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 library(tidyr)
 library(tibble)
 
+=======
+>>>>>>> 319aaf1763ca767e820298cb0eaf6c504234ddcd
 dfr<-read.csv(file="PACE_handheldsoilmoisture_master.csv")
 levels(dfr$Date)[20]<-"2018-05-21"
 dfr$Date<-as.Date(dfr$Date)
@@ -18,7 +21,10 @@ for(x in dfr$Species){
   assign(paste("df",x,sep=""),df)
   assign(paste("ymin",x,sep=""),min(df$moisture.avg))
   assign(paste("ymax",x,sep=""),max(df$moisture.avg))
+<<<<<<< HEAD
   
+=======
+>>>>>>> 319aaf1763ca767e820298cb0eaf6c504234ddcd
 }
 
 dfr1<-aggregate(data=dfLuc,moisture.avg~treatment+Date,FUN=mean)
