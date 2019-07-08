@@ -123,53 +123,52 @@ df4<-subset(allsum, Treatment == "EleDrt")
 ##start a tiff file
 tiff(file = paste("FIELD",x,sD,"-",eD, ".tiff"), width = 3200, height = 2100, units = "px", res = 400) 
 #matrix of three panels
-par(mfcol=c(1,3))
+par(mfcol=c(3,1),mar=c(0,4,0,0),oma=c(5,1,3,1))
 #plot Surface Temp-max
 plot(df1$maxavg ~ df1$Date, 
      type = "l",
      xaxt='n',
+     xlab="",
      ylim = c(Smin+1,Smax-1),
-     ylab=expression(paste("Temperature (",degree~C,")")),
-     xlab="Date",
+     ylab="",
      las=2,
      col=4)
 points(df2$maxavg ~ df2$Date, type = "l",col=4,lty=2)
 points(df3$maxavg ~ df2$Date, type = "l",col=2)
 points(df4$maxavg ~ df2$Date, type = "l",col=2,lty=2)
-mtext(text="Maximum Daily Temperature",side=3,outer=FALSE,cex=0.75)
-axis.Date(side=1,at=seq(as.Date("2018-05-01"),as.Date("2019-05-01"),by="months"),labels=TRUE,las=2,cex.axis=0.85)
+mtext(text="Maximum Daily Temperature",side=3,outer=FALSE,cex=0.75,padj=1.5)
+mtext(text="Plot Surface Temperatures by Treatment",side=3,line=2,outer=FALSE,cex=0.75)
 #plot Surface Temp-min
 plot(df1$minavg ~ df1$Date, 
      type = "l",
      xaxt='n',
+     xlab="",
      ylim = c(Smin+1,Smax-1),
      ylab=expression(paste("Temperature (",degree~C,")")),
-     xlab="Date",
      las=2,
      col=4)
 points(df2$minavg ~ df2$Date, type = "l",col=4,lty=2)
 points(df3$minavg ~ df2$Date, type = "l",col=2)
 points(df4$minavg ~ df2$Date, type = "l",col=2,lty=2)
-mtext(text="Minimum Daily Temperature",side=3,outer=FALSE,cex=0.75)
-mtext(text="Plot Surface Temperatures by Treatment",side=3,line=2,outer=FALSE,cex=0.75)
-axis.Date(side=1,at=seq(as.Date("2018-05-01"),as.Date("2019-05-01"),by="months"),labels=TRUE,las=2,cex.axis=0.85)
+legend("topright", y = NULL, 
+       legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
+       col = c(4,4,2,2),lty=c(1,3,1,3),lwd=2)
+mtext(text="Minimum Daily Temperature",side=3,outer=FALSE,cex=0.75,padj=1.5)
 #plot Surface Temp-mean
 plot(df1$valavg ~ df1$Date, 
      type = "l",
      xaxt='n',
      ylim = c(Smin+1,Smax-1),
-     ylab=expression(paste("Temperature (",degree~C,")")),
+     ylab="",
      xlab="Date",
      las=2,
      col=4)
 points(df2$valavg ~ df2$Date, type = "l",col=4,lty=2)
 points(df3$valavg ~ df2$Date, type = "l",col=2)
 points(df4$valavg ~ df2$Date, type = "l",col=2,lty=2)
-legend("topright", y = NULL, 
-       legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
-       col = c(4,4,2,2),lty=c(1,3,1,3),lwd=2,cex=0.8)
-mtext(text="Mean Daily Temperature",side=3,outer=FALSE,cex=0.75)
-axis.Date(side=1,at=seq(as.Date("2018-05-01"),as.Date("2019-05-01"),by="months"),labels=TRUE,las=2,cex.axis=0.85)
+mtext(text="Mean Daily Temperature",side=3,outer=FALSE,cex=0.75,padj=1.5)
+mtext(text="Date",side=1,cex=0.75,padj=5)
+axis.Date(side=1,at=seq(as.Date("2018-05-01"),as.Date("2019-05-01"),by="months"),labels=TRUE)
 
 dev.off()
 
@@ -180,6 +179,6 @@ df2<-subset(sumstat, Treatment == "AmbDrt")
 df3<-subset(sumstat, Treatment == "EleCon")
 df4<-subset(sumstat, Treatment == "EleDrt")
 
-stats<-data.frame("Treatment"=c("aT-Con","aT-Drt","eT-Con","eT-Drt"),"less0"=c(sum(df1$minavg<0),sum(df2$minavg<0),sum(df3$minavg<0),sum(df4$minavg<0)),"less5"=c(sum(df1$minavg<5),sum(df2$minavg<5),sum(df3$minavg<5),sum(df4$minavg<5)),"over35"=c(sum(df1$maxavg>35),sum(df2$maxavg>35),sum(df3$maxavg>35),sum(df4$maxavg>35)),"over40"=c(sum(df1$maxavg>40),sum(df2$maxavg>40),sum(df3$maxavg>40),sum(df4$maxavg>40)))
+stats<-data.frame("Treatment"=c("aT-Con","aT-Drt","eT-Con","eT-Drt"),"less0"=c(sum(df1$minavg<0),sum(df2$minavg<0),sum(df3$minavg<0),sum(df4$minavg<0)),"less5"=c(sum(df1$minavg<5),sum(df2$minavg<5),sum(df3$minavg<5),sum(df4$minavg<5)),"over35"=c(sum(df1$maxavg>35),sum(df2$maxavg>35),sum(df3$maxavg>35),sum(df4$maxavg>35)),"over40"=c(sum(df1$maxavg>40),sum(df2$maxavg>40),sum(df3$maxavg>40),sum(df4$maxavg>40)),"over45"=c(sum(df1$maxavg>45),sum(df2$maxavg>45),sum(df3$maxavg>45),sum(df4$maxavg>45)))
 
 write.csv(stats,file="Daily_Temp_Summary_Stats_2019-07-01.csv")
