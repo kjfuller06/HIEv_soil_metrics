@@ -371,9 +371,9 @@ plot(Irrig2$Irrigation~Irrig2$Date,
      xlim=c(min(Irrig1$Date),max(Irrig1$Date)))
 corners2 = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 par(xpd = TRUE) #Draw outside plot area
-text(x = corners2[2]+corners2[2]/3000, y = mean(corners2[3:4])-66, "Irrigation\n(mm)",srt=270,cex=0.6)
-text(x = corners2[2]+corners2[2]/7000, y = mean(corners2[3:4])-65, "20\n10\n0",las=0,cex=0.65)
-axis(side=4,at=c(5,10,15),las=2,labels=c("","",""))
+text(x = corners2[2]+corners2[2]/3000, y = mean(corners2[3:4])-64.5, "Irrigation\n(mm)",srt=270,cex=0.7)
+text(x = corners2[2]+corners2[2]/7000, y = mean(corners2[3:4])-64.5, "20\n\n10\n\n0",las=0,cex=0.55)
+axis(side=4,at=c(0,10,20),las=2,labels=c("","",""))
 
 dev.off()
 
@@ -472,9 +472,9 @@ with(Irrig2,plot(Irrig2$Irrigation~Irrig2$Date,
                                                     xlim=c(min(Irrig1$Date),max(Irrig1$Date))))
 corners2 = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 par(xpd = TRUE) #Draw outside plot area
-text(x = corners2[2]+corners2[2]/3000, y = mean(corners2[3:4])-66, "Irrigation\n(mm)",srt=270,cex=0.6)
-text(x = corners2[2]+corners2[2]/7000, y = mean(corners2[3:4])-65, "20\n10\n0",las=0,cex=0.65)
-axis(side=4,at=c(5,10,15),las=2,labels=c("","",""))
+text(x = corners2[2]+corners2[2]/3000, y = mean(corners2[3:4])-64.5, "Irrigation\n(mm)",srt=270,cex=0.7)
+text(x = corners2[2]+corners2[2]/7000, y = mean(corners2[3:4])-64.5, "20\n\n10\n\n0",las=0,cex=0.55)
+axis(side=4,at=c(0,10,20),las=2,labels=c("","",""))
 
 dev.off()
 
@@ -571,9 +571,9 @@ with(Irrig2,plot(Irrigation~Date,
                                            xlim=c(min(Irrig1$Date),max(Irrig1$Date))))
 corners2 = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 par(xpd = TRUE) #Draw outside plot area
-text(x = corners2[2]+corners2[2]/3000, y = mean(corners2[3:4])-66, "Irrigation\n(mm)",srt=270,cex=0.6)
-text(x = corners2[2]+corners2[2]/7000, y = mean(corners2[3:4])-65, "20\n10\n0",las=0,cex=0.65)
-axis(side=4,at=c(5,10,15),las=2,labels=c("","",""))
+text(x = corners2[2]+corners2[2]/3000, y = mean(corners2[3:4])-64.5, "Irrigation\n(mm)",srt=270,cex=0.7)
+text(x = corners2[2]+corners2[2]/7000, y = mean(corners2[3:4])-64.5, "20\n\n10\n\n0",las=0,cex=0.55)
+axis(side=4,at=c(0,10,20),las=2,labels=c("","",""))
 
 dev.off()
 
