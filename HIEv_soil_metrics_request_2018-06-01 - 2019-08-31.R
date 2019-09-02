@@ -1,5 +1,5 @@
 #write start date for first analysis
-sD<-as.Date("2018-06-01")
+sD<-as.Date("2018-05-01")
 #Write end date for first analysis
 eD<-as.Date("2019-08-31")
 
@@ -835,14 +835,13 @@ points(df3$value ~ df3$Date, type = "l",col=2)
 # polygon(c(df3$Date,rev(df3$Date)),c(df3$lower,rev(df3$upper)),col=adjustcolor("red",alpha.f=0.5),border=NA)
 points(df4$value ~ df4$Date, type = "l",col=2,lty=2)
 # polygon(c(df4$Date,rev(df4$Date)),c(df4$lower,rev(df4$upper)),col=adjustcolor("red",alpha.f=0.25),density=25)
+rect(xleft=as.Date("2018-06-01"),ybottom=(ymin-3),xright=as.Date("2018-12-01"),ytop=(ymax+1),col= rgb(1.0,0,0,alpha=0.05))
+axis.Date(side=1,at=as.Date("2018-09-01"),labels="Drought\n",cex.axis=0.75)
+rect(xleft=as.Date("2019-06-01"),ybottom=(ymin-3),xright=as.Date("2019-12-01"),ytop=(ymax+1),col= rgb(1.0,0,0,alpha=0.05))
+axis.Date(side=1,at=as.Date("2019-07-25"),labels="Drought\n",cex.axis=0.75)
 legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
        col = c(4,4,2,2),lty=c(1,2,1,2),lwd=2,cex=0.8)
-rect(xleft=as.Date("2018-08-22"),ybottom=(ymin-3),xright=as.Date("2018-12-01"),ytop=(ymax+1),col= rgb(1.0,0,0,alpha=0.05))
-axis.Date(side=1,at=as.Date("2018-10-11"),labels="Drought\n",cex.axis=0.75)
-rect(xleft=as.Date("2019-06-01"),ybottom=(ymin-3),xright=as.Date("2019-12-01"),ytop=(ymax+1),col= rgb(1.0,0,0,alpha=0.05))
-axis.Date(side=1,at=as.Date("2019-07-25"),labels="Drought\n",cex.axis=0.75)
-
 
 dev.off()
 
