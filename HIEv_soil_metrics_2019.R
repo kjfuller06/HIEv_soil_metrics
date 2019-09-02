@@ -577,14 +577,6 @@ axis(side=4,at=c(0,10,20),las=2,labels=c("","",""))
 
 dev.off()
 
-#Restart####
-rm(list=ls())
-
-#write start date for first analysis
-sD<-as.Date("2018-05-01")
-#Write end date for first analysis
-eD<-as.Date("2019-05-01")
-
 #Soil Temperature####
 #only keep variables of interest
 s1 <- (downloadTOA5("PACE_AUTO_S1_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,19:26)] #only keep variables of interest
@@ -713,11 +705,11 @@ df3<-subset(allsum, Treatment == "EleCon")
 df4<-subset(allsum, Treatment == "EleDrt")
 
 ##export to tiff file####
-tiff(file = paste("FIELD",x,"Daily_Soil_Temperature",eD, ".tiff"), width = 3200, height = 2100, units = "px", res = 400) 
+tiff(file = paste("FIELD",x,"Daily_Soil_Temperature",sD,"-",eD, ".tiff"), width = 3200, height = 2100, units = "px", res = 400) 
 #Luc temp plot####
 plot(df1$value ~ df1$Date, 
      type = "l",
-     ylim = c(ymin-2,ymax),
+     ylim = c(ymin,ymax+1),
      ylab=expression(paste("Temperature (",degree~C,")")),
      xlab="Date",
      main="Soil Temperature in Lucerne Plots by Treatment",
@@ -732,16 +724,8 @@ polygon(c(df4$Date,rev(df4$Date)),c(df4$lower,rev(df4$upper)),col=adjustcolor("r
 legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
        col = c(4,4,2,2),lty=c(1,2,1,2),lwd=2,cex=0.8)
-arrows(x0 =as.Date("2018-08-23"),length=0.05, y0 = 8, y1 = 6.5)
-text(x = as.Date("2018-08-23"), y = 8.5,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
-arrows(x0 =as.Date("2018-12-01"),length=0.05, y0 = 8, y1 = 6.5)
-text(x = as.Date("2018-12-01"), y = 8.5,labels=expression(paste("Drought Treatment Completed")),cex=0.6)
 
 dev.off()
-
-#remove extra objects####
-rm('x','allplot','allsum','df1','df2','df3','df4',
-   's1plot','s2plot','s3plot','s4plot','s5plot','s6plot','ymax','ymin')
 
 #FES####
 x<-"FES"
@@ -793,11 +777,11 @@ df3<-subset(allsum, Treatment == "EleCon")
 df4<-subset(allsum, Treatment == "EleDrt")
 
 ##export to tiff file####
-tiff(file = paste("FIELD",x,"Daily_Soil_Temperature",eD, ".tiff"), width = 3200, height = 2100, units = "px", res = 400) 
+tiff(file = paste("FIELD",x,"Daily_Soil_Temperature",sD,"-",eD, ".tiff"), width = 3200, height = 2100, units = "px", res = 400) 
 #Fes temp plot####
 plot(df1$value ~ df1$Date, 
      type = "l",
-     ylim = c(ymin-2,ymax),
+     ylim = c(ymin,ymax+1.5),
      ylab=expression(paste("Temperature (",degree~C,")")),
      xlab="Date",
      main="Soil Temperature in Fescue Plots by Treatment",
@@ -812,12 +796,5 @@ polygon(c(df4$Date,rev(df4$Date)),c(df4$lower,rev(df4$upper)),col=adjustcolor("r
 legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
        col = c(4,4,2,2),lty=c(1,2,1,2),lwd=2,cex=0.8)
-arrows(x0 =as.Date("2018-06-01"),length=0.05, y0 = 8, y1 = 6.5)
-text(x = as.Date("2018-06-01"), y = 8.5,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
-arrows(x0 =as.Date("2018-12-01"),length=0.05, y0 = 8, y1 = 6.5)
-text(x = as.Date("2018-12-01"), y = 8.5,labels=expression(paste("Drought Treatment Completed")),cex=0.6)
 
 dev.off()
-
-#remove all objects####
-rm(list=ls())
