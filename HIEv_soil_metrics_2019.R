@@ -328,7 +328,7 @@ tiff(file = paste("FIELD",x,"Daily_Soil_Moisture",sD,"-",eD, ".tiff"), width = 3
 par(mar=c(5.1,4.1,4.1,3.1))
 plot(df1$value ~ df1$Date, 
      type = "l",
-     ylim = c(ymin-0.05,ymax+0.02),
+     ylim = c(ymin-0.022,ymax+0.032),
      ylab="",
      xlab="",
      main="Soil Water Content in Fescue Plots by Treatment",
@@ -352,6 +352,7 @@ legend("topleft", y = NULL,
 par(new=TRUE)
 plot(Irrig1$Irrigation~Irrig1$Date,
      type="h",
+     lwd=2,
      axes=FALSE,
      xaxt='n',
      ylab="",
@@ -360,6 +361,7 @@ plot(Irrig1$Irrigation~Irrig1$Date,
 par(new=TRUE)
 plot(Irrig2$Irrigation~Irrig2$Date,
      type="h",
+     lwd=2,
      col=2,
      axes=FALSE,
      xaxt='n',
@@ -369,8 +371,8 @@ plot(Irrig2$Irrigation~Irrig2$Date,
      xlim=c(min(Irrig1$Date),max(Irrig1$Date)))
 corners2 = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 par(xpd = TRUE) #Draw outside plot area
-text(x = corners2[2]+corners2[2]/850, y = mean(corners2[3:4])-66, "Irrigation\n(mm)",srt=270,cex=0.6)
-text(x = corners2[2]+corners2[2]/1800, y = mean(corners2[3:4])-65, "20\n10\n0",las=0,cex=0.65)
+text(x = corners2[2]+corners2[2]/3000, y = mean(corners2[3:4])-66, "Irrigation\n(mm)",srt=270,cex=0.6)
+text(x = corners2[2]+corners2[2]/7000, y = mean(corners2[3:4])-65, "20\n10\n0",las=0,cex=0.65)
 axis(side=4,at=c(5,10,15),las=2,labels=c("","",""))
 
 dev.off()
@@ -431,7 +433,7 @@ tiff(file = paste("FIELD",x,"Daily_Soil_Moisture",sD,"-",eD, ".tiff"), width = 3
 par(mar=c(5.1,4.1,4.1,3.1))
 plot(df1$value ~ df1$Date, 
      type = "l",
-     ylim = c(ymin-0.05,ymax+0.02),
+     ylim = c(ymin-0.02,ymax+0.015),
      ylab="",
      xlab="",
      main="Soil Water Content in Biserrula Plots by Treatment",
@@ -452,6 +454,7 @@ legend("topleft", y = NULL,
 par(new=TRUE)
 plot(Irrig1$Irrigation~Irrig1$Date,
      type="h",
+     lwd=2,
      axes=FALSE,
      xaxt='n',
      ylab="",
@@ -459,7 +462,7 @@ plot(Irrig1$Irrigation~Irrig1$Date,
      ylim = c(0,150))
 par(new=TRUE)
 with(Irrig2,plot(Irrig2$Irrigation~Irrig2$Date,
-                                                    type="h",
+                                                    type="h",lwd=2,
                                                     col=2,
                                                     axes=FALSE,
                                                     xaxt='n',
@@ -469,8 +472,8 @@ with(Irrig2,plot(Irrig2$Irrigation~Irrig2$Date,
                                                     xlim=c(min(Irrig1$Date),max(Irrig1$Date))))
 corners2 = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 par(xpd = TRUE) #Draw outside plot area
-text(x = corners2[2]+corners2[2]/850, y = mean(corners2[3:4])-66, "Irrigation\n(mm)",srt=270,cex=0.6)
-text(x = corners2[2]+corners2[2]/1800, y = mean(corners2[3:4])-65, "20\n10\n0",las=0,cex=0.65)
+text(x = corners2[2]+corners2[2]/3000, y = mean(corners2[3:4])-66, "Irrigation\n(mm)",srt=270,cex=0.6)
+text(x = corners2[2]+corners2[2]/7000, y = mean(corners2[3:4])-65, "20\n10\n0",las=0,cex=0.65)
 axis(side=4,at=c(5,10,15),las=2,labels=c("","",""))
 
 dev.off()
@@ -530,7 +533,7 @@ tiff(file = paste("FIELD",x,"Daily_Soil_Moisture",sD,"-",eD, ".tiff"), width = 3
 par(mar=c(5.1,4.1,4.1,3.1))
 plot(df1$value ~ df1$Date, 
      type = "l",
-     ylim = c(ymin-0.05,ymax+0.02),
+     ylim = c(ymin-0.025,ymax+0.02),
      ylab="",
      xlab="",
      main="Soil Water Content in Rye Plots by Treatment",
@@ -550,6 +553,7 @@ legend("topleft", y = NULL,
 par(new=TRUE)
 plot(Irrig1$Irrigation~Irrig1$Date,
      type="h",
+     lwd=2,
      axes=FALSE,
      xaxt='n',
      ylab="",
@@ -557,7 +561,7 @@ plot(Irrig1$Irrigation~Irrig1$Date,
      ylim = c(0,150))
 par(new=TRUE)
 with(Irrig2,plot(Irrigation~Date,
-                                           type="h",
+                                           type="h",lwd=2,
                                            col=2,
                                            axes=FALSE,
                                            xaxt='n',
@@ -567,8 +571,8 @@ with(Irrig2,plot(Irrigation~Date,
                                            xlim=c(min(Irrig1$Date),max(Irrig1$Date))))
 corners2 = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 par(xpd = TRUE) #Draw outside plot area
-text(x = corners2[2]+corners2[2]/850, y = mean(corners2[3:4])-66, "Irrigation\n(mm)",srt=270,cex=0.6)
-text(x = corners2[2]+corners2[2]/1800, y = mean(corners2[3:4])-65, "20\n10\n0",las=0,cex=0.65)
+text(x = corners2[2]+corners2[2]/3000, y = mean(corners2[3:4])-66, "Irrigation\n(mm)",srt=270,cex=0.6)
+text(x = corners2[2]+corners2[2]/7000, y = mean(corners2[3:4])-65, "20\n10\n0",las=0,cex=0.65)
 axis(side=4,at=c(5,10,15),las=2,labels=c("","",""))
 
 dev.off()
