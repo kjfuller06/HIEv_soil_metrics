@@ -1,7 +1,7 @@
 #write start date for first analysis
 sD<-as.Date("2019-06-01")
 #Write end date for first analysis
-eD<-as.Date("2019-07-31")
+eD<-as.Date("2019-08-31")
 
 #Irrigation####
 Irrig<- (downloadTOA5("PACE_AUTO_ALL_IRRIG_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,4:6)]
@@ -18,7 +18,8 @@ levels(Irrig$Treatment)<-c("Con","Drt","Con","Drt")
 
 #subset data by treatment
 Irrig1<-subset(Irrig, Treatment == "Con")
-Irrig2<-subset(Irrig[Irrig$Date>"2018-05-31"&Irrig$Date<"2018-12-01",], Treatment == "Drt")
+Irrig2<-subset(Irrig, Treatment == "Drt")
+Irrig2[Irrig2$Irrigation==0.000000,]<-NA
 
 #Soil Moisture####
 #only keep moisture variables of interest
@@ -196,7 +197,7 @@ par(mar =c(0,0,0,3))
 plot(df1$value ~ df1$Date, 
      type = "l",lwd=0.75,
      xaxt='n',
-     ylim = c(ymin-0.025,ymax+0.025),
+     ylim = c(ymin-0.01,ymax),
      ylab="",
      xlab="",
      main="",
@@ -218,7 +219,7 @@ legend("topright", y = NULL,
 par(mar = c(1,0,0,3))
 plot(df5$value ~ df5$Date, 
      type = "l",lwd=0.75,
-     ylim = c(ymin-0.05,ymax),
+     ylim = c(ymin-0.01,ymax),
      ylab="",
      xlab="",
      col=4,
@@ -235,21 +236,22 @@ points(df7$value ~ df7$Date, type = "l",col=2,lwd=0.75)
 polygon(c(df7$Date,rev(df7$Date)),c(df7$lower,rev(df7$upper)),col=adjustcolor("red",alpha.f=0.5),border=NA)
 points(df8$value ~ df8$Date, type = "l",col=2,lwd=0.75,lty=2)
 polygon(c(df8$Date,rev(df8$Date)),c(df8$lower,rev(df8$upper)),col=adjustcolor("red",alpha.f=0.25),density=25)
-arrows(x0 =as.Date("2018-08-23"),length=0.05, y0 = 0.025, y1 = -0.015)
-text(x = as.Date("2018-08-23"), y = 0.03,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
+# arrows(x0 =as.Date("2019-06-01"),length=0.05, y0 = 0.025, y1 = -0.015)
+# text(x = as.Date("2019-06-01"), y = 0.03,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 
 #Irrigation plot
 par(new=TRUE)
 plot(Irrig1$Irrigation~Irrig1$Date,
      type="h",
+     lwd=2,
      axes=FALSE,
      xaxt='n',
      ylab="",
      xlab="",
      ylim = c(0,125))
 par(new=TRUE)
-with(Irrig2[Irrig2$Date>"2018-08-22",],plot(Irrigation~Date,
-                                           type="h",
+with(Irrig2,plot(Irrigation~Date,
+                                           type="h",lwd=2,
                                            col=2,
                                            axes=FALSE,
                                            xaxt='n',
@@ -259,8 +261,8 @@ with(Irrig2[Irrig2$Date>"2018-08-22",],plot(Irrigation~Date,
                                            xlim=c(min(Irrig1$Date),max(Irrig1$Date))))
 corners2 = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 par(xpd = TRUE) #Draw outside plot area
-text(x = corners2[2]+corners2[2]/850, y = mean(corners2[3:4])-52, "Irrigation\n(mm)",srt=270,cex=0.6)
-text(x = corners2[2]+corners2[2]/1800, y = mean(corners2[3:4])-52, "20\n10\n0",las=0,cex=0.65)
+text(x = corners2[2]+corners2[2]/3000, y = mean(corners2[3:4])-52, "Irrigation\n(mm)",srt=270,cex=0.6)
+text(x = corners2[2]+corners2[2]/7000, y = mean(corners2[3:4])-52, "20\n10\n0",las=0,cex=0.65)
 axis(side=4,at=c(0,10,20),las=2,labels=c("","",""))
 
 mtext(text="Soil Moisture Content in Lucerne by Treatment",side=3,line=1,outer=TRUE)
@@ -343,8 +345,8 @@ polygon(c(df4$Date,rev(df4$Date)),c(df4$lower,rev(df4$upper)),col=adjustcolor("r
 legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
        col = c(4,4,2,2),lty=c(1,2,1,2),lwd=1.5,cex=0.75)
-arrows(x0 =as.Date("2018-06-01"),length=0.05, y0 = 0.03, y1 = 0.01)
-text(x = as.Date("2018-06-01"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
+# arrows(x0 =as.Date("2018-06-01"),length=0.05, y0 = 0.03, y1 = 0.01)
+# text(x = as.Date("2018-06-01"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 
 #Irrigation plot
 par(new=TRUE)
@@ -442,8 +444,8 @@ polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("b
 legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt"), 
        col = c(4,4),lty=c(1,2),lwd=1.5,cex=0.75)
-arrows(x0 =as.Date("2018-08-22"),length=0.05, y0 = 0.03, y1 = 0.0)
-text(x = as.Date("2018-08-22"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
+# arrows(x0 =as.Date("2018-08-22"),length=0.05, y0 = 0.03, y1 = 0.0)
+# text(x = as.Date("2018-08-22"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 
 
 #Irrigation plot
@@ -456,7 +458,7 @@ plot(Irrig1$Irrigation~Irrig1$Date,
      xlab="",
      ylim = c(0,150))
 par(new=TRUE)
-with(Irrig2[Irrig2$Date>"2018-08-22 00:00:00"],plot(Irrig2$Irrigation~Irrig2$Date,
+with(Irrig2,plot(Irrig2$Irrigation~Irrig2$Date,
                                                     type="h",
                                                     col=2,
                                                     axes=FALSE,
@@ -541,8 +543,8 @@ polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("b
 legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt"), 
        col = c(4,4),lty=c(1,2),lwd=1.5,cex=0.75)
-arrows(x0 =as.Date("2018-08-22"),length=0.05, y0 = 0.03, y1 = 0.0)
-text(x = as.Date("2018-08-22"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
+# arrows(x0 =as.Date("2018-08-22"),length=0.05, y0 = 0.03, y1 = 0.0)
+# text(x = as.Date("2018-08-22"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 
 #Irrigation plot
 par(new=TRUE)
@@ -554,7 +556,7 @@ plot(Irrig1$Irrigation~Irrig1$Date,
      xlab="",
      ylim = c(0,150))
 par(new=TRUE)
-with(Irrig2[Irrig2$Date>"2018-08-22"],plot(Irrigation~Date,
+with(Irrig2,plot(Irrigation~Date,
                                            type="h",
                                            col=2,
                                            axes=FALSE,
