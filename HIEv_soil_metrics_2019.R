@@ -18,7 +18,7 @@ levels(Irrig$Treatment)<-c("Con","Drt","Con","Drt")
 
 #subset data by treatment
 Irrig1<-subset(Irrig, Treatment == "Con")
-Irrig2<-subset(Irrig, Treatment == "Drt")
+Irrig2<-subset(Irrig[Irrig$Date>"2019-05-31"&Irrig$Date<"2019-12-01",], Treatment == "Drt")
 Irrig2[Irrig2$Irrigation==0.000000,]<-NA
 
 #Soil Moisture####
