@@ -1,8 +1,8 @@
 #Basic####
 #write start date for first analysis
-sD<-as.Date("2018-05-01")
+sD<-as.Date("2019-05-01")
 #Write end date for first analysis
-eD<-as.Date("2019-05-01")
+eD<-as.Date("2019-09-15")
 
 #download from HIEv and processing####
 #get data, only keep variables of interest
@@ -120,7 +120,7 @@ df2<-subset(allsum, Treatment == "AmbDrt")
 df3<-subset(allsum, Treatment == "EleCon")
 df4<-subset(allsum, Treatment == "EleDrt")
 
-##start a tiff file
+#start a tiff file####
 tiff(file = paste("FIELD",x,sD,"-",eD, ".tiff"), width = 3200, height = 2100, units = "px", res = 400) 
 #matrix of three panels
 par(mfcol=c(3,1),mar=c(0,4,0,0),oma=c(5,1,3,1))
@@ -172,7 +172,7 @@ axis.Date(side=1,at=seq(as.Date("2018-05-01"),as.Date("2019-05-01"),by="months")
 
 dev.off()
 
-#summary stats
+#summary stats####
 sumstat<-allsum[,c(1,2,4,5)]
 df1<-subset(sumstat, Treatment == "AmbCon")
 df2<-subset(sumstat, Treatment == "AmbDrt")
