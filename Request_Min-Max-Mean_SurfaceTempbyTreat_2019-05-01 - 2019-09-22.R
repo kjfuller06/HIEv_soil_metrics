@@ -179,6 +179,7 @@ df2<-subset(sumstat, Treatment == "AmbDrt")
 df3<-subset(sumstat, Treatment == "EleCon")
 df4<-subset(sumstat, Treatment == "EleDrt")
 
+#stats####
 stats<-data.frame("Treatment"=c("aT-Con","aT-Drt","eT-Con","eT-Drt"),"less0"=c(sum(df1$minavg<0),sum(df2$minavg<0),sum(df3$minavg<0),sum(df4$minavg<0)),"less5"=c(sum(df1$minavg<5),sum(df2$minavg<5),sum(df3$minavg<5),sum(df4$minavg<5)),"over35"=c(sum(df1$maxavg>35),sum(df2$maxavg>35),sum(df3$maxavg>35),sum(df4$maxavg>35)),"over40"=c(sum(df1$maxavg>40),sum(df2$maxavg>40),sum(df3$maxavg>40),sum(df4$maxavg>40)),"over45"=c(sum(df1$maxavg>45),sum(df2$maxavg>45),sum(df3$maxavg>45),sum(df4$maxavg>45)))
 
 write.csv(stats,file=paste("Daily_Temp_Summary_Stats",sD,"-",eD,".csv"))
