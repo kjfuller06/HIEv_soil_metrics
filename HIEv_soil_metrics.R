@@ -21,171 +21,88 @@ Irrig1<-subset(Irrig, Treatment == "Con")
 Irrig2<-subset(Irrig[Irrig$Date>"2018-05-31"&Irrig$Date<"2018-12-01",], Treatment == "Drt")
 
 #Soil Moisture####
-#only keep moisture variables of interest
-s1 <- (downloadTOA5("PACE_AUTO_S1_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,3:18)]
-s2 <- (downloadTOA5("PACE_AUTO_S2_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,3:18)]
-s3 <- (downloadTOA5("PACE_AUTO_S3_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,3:18)]
-s4 <- (downloadTOA5("PACE_AUTO_S4_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,3:18)]
-s5 <- (downloadTOA5("PACE_AUTO_S5_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,3:18)]
-s6 <- (downloadTOA5("PACE_AUTO_S6_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,3:18)]
-
-#Rename columns
-names(s1)<-c("DateTime","1RYEUpperAmbDrt",
-             "2RYEUpperAmbCon",
-             "3LUCUpperAmbDrt",
-             "3LUCLowerAmbDrt",
-             "3FESUpperAmbDrt",
-             "4FESUpperEleCon",
-             "4LUCUpperEleCon",
-             "4LUCLowerEleCon",
-             "5FESUpperEleDrt",
-             "5LUCUpperEleDrt",
-             "5LUCLowerEleDrt",
-             "6LUCUpperAmbCon",
-             "6LUCLowerAmbCon",
-             "6FESUpperAmbCon",
-             "7BISUpperAmbDrt",
-             "8BISUpperAmbCon")
-
-names(s2)<-c("DateTime","1BISUpperAmbCon",
-             "2BISUpperAmbDrt",
-             "3LUCUpperEleDrt",
-             "3LUCLowerEleDrt",
-             "3FESUpperEleDrt",
-             "4LUCLowerAmbDrt",
-             "4LUCUpperAmbDrt",
-             "4FESUpperAmbDrt",
-             "5LUCUpperAmbCon",
-             "5LUCLowerAmbCon",
-             "5FESUpperAmbCon",
-             "6LUCUpperEleCon",
-             "6LUCLowerEleCon",
-             "6FESUpperEleCon",
-             "7RYEUpperAmbDrt",
-             "8RYEUpperAmbCon")
-
-names(s3)<-c("DateTime","1RYEUpperAmbCon",
-             "2RYEUpperAmbDrt",
-             "3FESUpperAmbCon",
-             "3LUCUpperAmbCon",
-             "3LUCLowerAmbCon",
-             "4LUCUpperEleCon",
-             "4LUCLowerEleCon",
-             "4FESUpperEleCon",
-             "5FESUpperEleDrt",
-             "5LUCUpperEleDrt",
-             "5LUCLowerEleDrt",
-             "6LUCUpperAmbDrt",
-             "6LUCLowerAmbDrt",
-             "6FESUpperAmbDrt",
-             "7BISUpperAmbDrt",
-             "8BISUpperAmbCon")
-
-names(s4)<-c("DateTime","1RYEUpperAmbCon",
-             "2RYEUpperAmbDrt",
-             "3LUCUpperEleCon",
-             "3LUCLowerEleCon",
-             "3FESUpperEleCon",
-             "4LUCUpperAmbDrt",
-             "4LUCLowerAmbDrt",
-             "4FESUpperAmbDrt",
-             "5FESUpperAmbCon",
-             "5LUCUpperAmbCon",
-             "5LUCLowerAmbCon",
-             "6FESUpperEleDrt",
-             "6LUCUpperEleDrt",
-             "6LUCLowerEleDrt",
-             "7BISUpperAmbCon",
-             "8BISUpperAmbDrt")
-
-names(s5)<-c("DateTime","1BISUpperAmbDrt",
-             "2BISUpperAmbCon",
-             "3FESUpperEleCon",
-             "3LUCUpperEleCon",
-             "3LUCLowerEleCon",
-             "4FESUpperAmbDrt",
-             "4LUCUpperAmbDrt",
-             "4LUCLowerAmbDrt",
-             "5LUCUpperEleDrt",
-             "5FESUpperEleDrt",
-             "5LUCLowerEleDrt",
-             "6LUCUpperAmbCon",
-             "6LUCLowerAmbCon",
-             "6FESUpperAmbCon",
-             "7RYEUpperAmbDrt",
-             "8RYEUpperAmbCon")
-
-names(s6)<-c("DateTime","1RYEUpperAmbCon",
-             "2RYEUpperAmbDrt",
-             "3LUCUpperEleDrt",
-             "3LUCLowerEleDrt",
-             "3FESUpperEleDrt",
-             "4FESUpperAmbCon",
-             "4LUCUpperAmbCon",
-             "4LUCLowerAmbCon",
-             "5LUCUpperEleCon",
-             "5LUCLowerEleCon",
-             "5FESUpperEleCon",
-             "6LUCUpperAmbDrt",
-             "6LUCLowerAmbDrt",
-             "6FESUpperAmbDrt",
-             "7BISUpperAmbDrt",
-             "8BISUpperAmbCon")
+#download data from HIEv and only keep soil moisture variables of interest
+for(i in c(1:6)){
+   s<-(downloadTOA5(paste("PACE_AUTO_S",i,"_BLWGRND_R_",sep=""), startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,3:26)]
+   assign(paste("s",i,sep=""),s)
+}
 
 #convert to long form, add "shelter" variable
-s1<-melt(s1,id.vars="DateTime")
+s1<-reshape2::melt(s1,id.vars="DateTime")
 s1$Shelter<-1
-s2<-melt(s2,id.vars="DateTime")
+s2<-reshape2::melt(s2,id.vars="DateTime")
 s2$Shelter<-2
-s3<-melt(s3,id.vars="DateTime")
+s3<-reshape2::melt(s3,id.vars="DateTime")
 s3$Shelter<-3
-s4<-melt(s4,id.vars="DateTime")
+s4<-reshape2::melt(s4,id.vars="DateTime")
 s4$Shelter<-4
-s5<-melt(s5,id.vars="DateTime")
+s5<-reshape2::melt(s5,id.vars="DateTime")
 s5$Shelter<-5
-s6<-melt(s6,id.vars="DateTime")
+s6<-reshape2::melt(s6,id.vars="DateTime")
 s6$Shelter<-6
 
-s1<-rbind(s1,s2,s3,s4,s5,s6)
+#combine into one DF
+df1<-rbind(s1,s2,s3,s4,s5,s6)
+names(df1)<-c("DateTime","SensorCode","value","Shelter")
+sensors<-read.csv("sensors.csv")
+df1<-merge(df1,sensors,by=c("Shelter","SensorCode"))
+
+#change class of variables
+df1$Sp<-as.factor(df1$Sp)
+df1$Plot<-as.factor(df1$Plot)
+df1$Shelter<-as.factor(df1$Shelter)
+df1$Date<-as.Date(df1$DateTime)
+
+#remove NAs
+df1<-na.omit(df1)
+
+#Summarize data
+df1<-aggregate(data=df1,value~SensorType+Sp+Date+Position+Treatment+Shelter+Plot,FUN=mean,simplify=TRUE,drop=TRUE)
+df1<-aggregate(data=df1,value~SensorType+Sp+Date+Position+Treatment,FUN=function(x) c(avg=mean(x),upper=mean(x)+sd(x)/sqrt(length(x)),lower=mean(x)-sd(x)/sqrt(length(x))),simplify=TRUE,drop=TRUE)
+
+#spit the aggregate function outputs into a DF and reassign so they are variables in the dataframe
+##otherwise the output is a list within df1
+val<-data.frame(df1[["value"]])
+df1$value<-val$avg
+df1$upper<-val$upper
+df1$lower<-val$lower
+
+#separate data frame by data type and species
+SM<-df1[df1$SensorType=="TDR",]
+for(i in levels(SM$Sp)){
+    x<-SM[SM$Sp==i,]
+    x<-x[order(x$Date,x$Treatment),]
+    assign(paste(i,1,sep=""),x)
+}
+ST<-df1[df1$SensorType=="Temp",]
+for(i in levels(ST$Sp)){
+   x<-ST[ST$Sp==i,]
+   x<-x[order(x$Date,x$Treatment),]
+   assign(paste(i,2,sep=""),x)
+}
+
+safety<-df1
 
 #LUC####
-x<-"LUC"
-#create new dfs based on species
-s1plot<-s1[grep(x, s1$variable),]
-s1plot<-separate(data=s1plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-
-##recognize variables as factors instead of characters
-s1plot$Species<-as.factor(s1plot$Species)
-s1plot$Plot<-as.factor(s1plot$Plot)
-s1plot$Shelter<-as.factor(s1plot$Shelter)
-
-##average and standard error by treatment
-s1plot<-na.omit(s1plot)
-s1plot$Date<-as.Date(s1plot$DateTime)
-s1plot<-aggregate(data=s1plot,value~Date+Treatment+Shelter+Plot,FUN=mean,simplify=TRUE,drop=TRUE)
-s1plot<-aggregate(data=s1plot,value~Date+Treatment,FUN=function(x) c(avg=mean(x),upper=mean(x)+sd(x)/sqrt(length(x)),lower=mean(x)-sd(x)/sqrt(length(x))),simplify=TRUE,drop=TRUE)
-s1plot2<-data.frame(s1plot[["value"]])
-s1plot$value<-s1plot2$avg
-s1plot$upper<-s1plot2$upper
-s1plot$lower<-s1plot2$lower
-
-#rename columns
-s1plot$Treatment<-factor(s1plot$Treatment,levels=c("UpperAmbCon","LowerAmbCon","UpperAmbDrt","LowerAmbDrt",
-                                                   "UpperEleCon","LowerEleCon","UpperEleDrt","LowerEleDrt"))
-s1plot<-s1plot[order(s1plot$Date,s1plot$Treatment),]
-
-ymax<-max(s1plot$value,na.rm=T) #use same temperature range across temperature charts
-ymin<-min(s1plot$value,na.rm=T) #there is an NA value in a soil temp sensor data stream that is stopping the script
+#calculate max and min values for ylim, remove NAs
+ymax<-max(LUC1$upper,na.rm=T) 
+ymin<-min(LUC1$lower,na.rm=T) 
 
 ##subset each treatment to a different data set
-n<-levels(s1plot$Treatment)
-for(i in n){
-   df1<-subset(s1plot, Treatment == i)
-   assign(paste("df",match(i,n),sep=""),df1)
+n1<-levels(LUC1$Position)
+n2<-levels(LUC1$Treatment)
+count=1
+for(i in n1){
+   x1<-LUC1[LUC1$Position==i,]
+   for(i in n2){
+      x2<-subset(x1, Treatment == i)
+      assign(paste("df",count,sep=""),x2)
+      count=count+1
+   }
 }
 
 #export graphs to tiff----
-tiff(file = paste("FIELD",x,"Daily Soil_Moisture",eD, ".tiff"), width = 3200, height = 2100, units = "px", res = 400) 
+tiff(file = paste("FIELD_LUC_Daily_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 3200, height = 2100, units = "px", res = 400) 
 
 #LUC plot----
 par(mfrow=c(2,1),oma=c(4,3,3,0))
@@ -196,7 +113,7 @@ par(mar =c(0,0,0,3))
 plot(df1$value ~ df1$Date, 
      type = "l",lwd=0.75,
      xaxt='n',
-     ylim = c(ymin-0.025,ymax+0.025),
+     ylim = c(ymin,ymax),
      ylab="",
      xlab="",
      main="",
@@ -235,8 +152,8 @@ points(df7$value ~ df7$Date, type = "l",col=2,lwd=0.75)
 polygon(c(df7$Date,rev(df7$Date)),c(df7$lower,rev(df7$upper)),col=adjustcolor("red",alpha.f=0.5),border=NA)
 points(df8$value ~ df8$Date, type = "l",col=2,lwd=0.75,lty=2)
 polygon(c(df8$Date,rev(df8$Date)),c(df8$lower,rev(df8$upper)),col=adjustcolor("red",alpha.f=0.25),density=25)
-arrows(x0 =as.Date("2018-08-23"),length=0.05, y0 = 0.025, y1 = -0.015)
-text(x = as.Date("2018-08-23"), y = 0.03,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
+# arrows(x0 =as.Date("2018-08-23"),length=0.05, y0 = 0.025, y1 = -0.015)
+# text(x = as.Date("2018-08-23"), y = 0.03,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 
 #Irrigation plot
 par(new=TRUE)
@@ -263,77 +180,37 @@ text(x = corners2[2]+corners2[2]/850, y = mean(corners2[3:4])-52, "Irrigation\n(
 text(x = corners2[2]+corners2[2]/1800, y = mean(corners2[3:4])-52, "20\n10\n0",las=0,cex=0.65)
 axis(side=4,at=c(0,10,20),las=2,labels=c("","",""))
 
-mtext(text="Soil Moisture Content in Lucerne by Treatment",side=3,line=1,outer=TRUE)
+mtext(text=paste("Soil Moisture Content in Lucerne by Treatment\n",sD,"-",eD),side=3,line=1,outer=TRUE)
 mtext(text="Date",side=1,line=2,outer=TRUE,cex=0.75)
 mtext(text="Soil Water Content",side=2,line=2,outer=TRUE,cex=0.75)
 
 dev.off()
 
-#remove all extra variables----
-rm('x','allplot','allsum','df1','df2','df3','df4','df5','df6','df7','df8',
-   's1plot','s2plot','s3plot','s4plot','s5plot','s6plot','corners2','ymax','ymin')
-
 #FES####
-x<-"FES"
-#create new dfs based on species
-s1plot<-rbind(s1[grep(x, s1$variable),])
-s2plot<-rbind(s2[grep(x, s2$variable),])
-s3plot<-rbind(s3[grep(x, s3$variable),])
-s4plot<-rbind(s4[grep(x, s4$variable),])
-s5plot<-rbind(s5[grep(x, s5$variable),])
-s6plot<-rbind(s6[grep(x, s6$variable),])
-
-#Separate treatments and other variables into separate columns
-s1plot<-separate(data=s1plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s2plot<-separate(data=s2plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s3plot<-separate(data=s3plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s4plot<-separate(data=s4plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s5plot<-separate(data=s5plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s6plot<-separate(data=s6plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-
-##combine all LUC data
-allplot<-rbind(s1plot,s2plot,s3plot,s4plot,s5plot,s6plot)
-
-##recognize variables as factors instead of characters
-allplot$Treatment<-as.factor(allplot$Treatment)
-allplot$Species<-as.factor(allplot$Species)
-allplot$Plot<-as.factor(allplot$Plot)
-allplot$Shelter<-as.factor(allplot$Shelter)
-
-##average and standard error by treatment
-allsum = data.table(allplot)
-allsum<-na.omit(allsum)
-allsum$Date<-as.Date(allsum$DateTime)
-allsum = allsum[,list(value = mean(value)), 'Plot,Shelter,Treatment,Date']
-allsum = allsum[,list(avg_value = mean(value), ste_value = sd(value)/sqrt(length(value))), 'Treatment,Date']
-allsum$upper<-allsum$avg_value+allsum$ste_value
-allsum$lower<-allsum$avg_value-allsum$ste_value
-
-#rename columns
-names(allsum)<-c("Treatment","Date","value","stderror","upper","lower")
-allsum$Treatment<-factor(allsum$Treatment,levels=c("UpperAmbCon","UpperAmbDrt","UpperEleCon","UpperEleDrt"))
-allsum<-allsum[order(Date,Treatment),] 
-
-ymax<-max(allsum$value,na.rm=T) #use same temperature range across temperature charts
-ymin<-min(allsum$value,na.rm=T) #there is an NA value in a soil temp sensor data stream that is stopping the script
+#calculate max and min values for ylim, remove NAs
+ymax<-max(FES1$upper,na.rm=T) 
+ymin<-min(FES1$lower,na.rm=T) 
 
 ##subset each treatment to a different data set
-df1<-subset(allsum, Treatment == "UpperAmbCon")
-df2<-subset(allsum, Treatment == "UpperAmbDrt")
-df3<-subset(allsum, Treatment == "UpperEleCon")
-df4<-subset(allsum, Treatment == "UpperEleDrt")
+n<-levels(FES1$Treatment)
+count=1
+for(i in n){
+   x<-subset(FES1, Treatment == i)
+   assign(paste("df",count,sep=""),x)
+   count=count+1
+}
 
 #export graphs to tiff####
-tiff(file = paste("FIELD",x,"Daily_Soil_Moisture",eD, ".tiff"), width = 3200, height = 2100, units = "px", res = 400) 
+tiff(file = paste("FIELD_FES_Daily_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 3200, height = 2100, units = "px", res = 400)
 #FES plot####
 #Soil moisture plot
 par(mar=c(5.1,4.1,4.1,3.1))
 plot(df1$value ~ df1$Date, 
      type = "l",
-     ylim = c(ymin-0.05,ymax+0.02),
+     ylim = c(ymin-0.05,ymax),
      ylab="",
      xlab="",
-     main="Soil Water Content in Fescue Plots by Treatment",
+     main=paste("Soil Water Content in Fescue Plots by Treatment\n",sD,"-",eD),
      col=4)
 mtext(side=2,"Soil Water Content",padj=-3.5)
 mtext(side=1,"Date",padj=3.5)
@@ -347,8 +224,8 @@ polygon(c(df4$Date,rev(df4$Date)),c(df4$lower,rev(df4$upper)),col=adjustcolor("r
 legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
        col = c(4,4,2,2),lty=c(1,2,1,2),lwd=1.5,cex=0.75)
-arrows(x0 =as.Date("2018-06-01"),length=0.05, y0 = 0.03, y1 = 0.01)
-text(x = as.Date("2018-06-01"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
+# arrows(x0 =as.Date("2018-06-01"),length=0.05, y0 = 0.03, y1 = 0.01)
+# text(x = as.Date("2018-06-01"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 
 #Irrigation plot
 par(new=TRUE)
@@ -378,65 +255,25 @@ axis(side=4,at=c(5,10,15),las=2,labels=c("","",""))
 dev.off()
 
 #Bis####
-x<-"BIS"
-#create new dfs based on species
-s1plot<-rbind(s1[grep(x, s1$variable),])
-s2plot<-rbind(s2[grep(x, s2$variable),])
-s3plot<-rbind(s3[grep(x, s3$variable),])
-s4plot<-rbind(s4[grep(x, s4$variable),])
-s5plot<-rbind(s5[grep(x, s5$variable),])
-s6plot<-rbind(s6[grep(x, s6$variable),])
-
-#Separate treatments and other variables into separate columns
-s1plot<-separate(data=s1plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s2plot<-separate(data=s2plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s3plot<-separate(data=s3plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s4plot<-separate(data=s4plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s5plot<-separate(data=s5plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s6plot<-separate(data=s6plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-
-##combine all LUC data
-allplot<-rbind(s1plot,s2plot,s3plot,s4plot,s5plot,s6plot)
-allplot<-allplot[allplot$DateTime>"2018-05-27 00:00:00",]
-
-##recognize variables as factors instead of characters
-allplot$Treatment<-as.factor(allplot$Treatment)
-allplot$Species<-as.factor(allplot$Species)
-allplot$Plot<-as.factor(allplot$Plot)
-allplot$Shelter<-as.factor(allplot$Shelter)
-
-##average and standard error by treatment
-allsum = data.table(allplot)
-allsum<-na.omit(allsum)
-allsum$Date<-as.Date(allsum$DateTime)
-allsum = allsum[,list(value = mean(value)), 'Plot,Shelter,Treatment,Date']
-allsum = allsum[,list(avg_value = mean(value), ste_value = sd(value)/sqrt(length(value))), 'Treatment,Date']
-allsum$upper<-allsum$avg_value+allsum$ste_value
-allsum$lower<-allsum$avg_value-allsum$ste_value
-
-#rename columns
-names(allsum)<-c("Treatment","Date","value","stderror","upper","lower")
-allsum$Treatment<-factor(allsum$Treatment,levels=c("UpperAmbCon","UpperAmbDrt"))
-allsum<-allsum[order(Date,Treatment),] 
-
-ymax<-max(allsum$value,na.rm=T) #use same temperature range across temperature charts
-ymin<-min(allsum$value,na.rm=T) #there is an NA value in a soil temp sensor data stream that is stopping the script
+#calculate max and min values for ylim, remove NAs
+ymax<-max(BIS1$upper,na.rm=T)
+ymin<-min(BIS1$lower,na.rm=T)
 
 ##subset each treatment to a different data set
-df1<-subset(allsum, Treatment == "UpperAmbCon")
-df2<-subset(allsum, Treatment == "UpperAmbDrt")
+df1<-subset(BIS1, Treatment == "AmbCon")
+df2<-subset(BIS1, Treatment == "AmbDrt")
 
 #export graphs to tiff####
-tiff(file = paste("FIELD",x,"Daily_Soil_Moisture",eD, ".tiff"), width = 3200, height = 2100, units = "px", res = 400) 
+tiff(file = paste("FIELD_BIS_Daily_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 3200, height = 2100, units = "px", res = 400)
 #BIS plot####
 #Soil moisture plot
 par(mar=c(5.1,4.1,4.1,3.1))
 plot(df1$value ~ df1$Date, 
      type = "l",
-     ylim = c(ymin-0.05,ymax+0.02),
+     ylim = c(ymin-0.05,ymax),
      ylab="",
      xlab="",
-     main="Soil Water Content in Biserrula Plots by Treatment",
+     main=paste("Soil Water Content in Biserrula Plots by Treatment\n",sD,"-",eD),
      col=4)
 mtext(side=2,"Soil Water Content",padj=-3.5)
 mtext(side=1,"Date",padj=3.5)
@@ -446,8 +283,8 @@ polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("b
 legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt"), 
        col = c(4,4),lty=c(1,2),lwd=1.5,cex=0.75)
-arrows(x0 =as.Date("2018-08-22"),length=0.05, y0 = 0.03, y1 = 0.0)
-text(x = as.Date("2018-08-22"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
+# arrows(x0 =as.Date("2018-08-22"),length=0.05, y0 = 0.03, y1 = 0.0)
+# text(x = as.Date("2018-08-22"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 
 
 #Irrigation plot
@@ -460,7 +297,7 @@ plot(Irrig1$Irrigation~Irrig1$Date,
      xlab="",
      ylim = c(0,150))
 par(new=TRUE)
-with(Irrig2[Irrig2$Date>"2018-08-22 00:00:00"],plot(Irrig2$Irrigation~Irrig2$Date,
+with(Irrig2[Irrig2$Date>"2018-08-22",],plot(Irrig2$Irrigation~Irrig2$Date,
                                                     type="h",
                                                     col=2,
                                                     axes=FALSE,
@@ -478,64 +315,25 @@ axis(side=4,at=c(5,10,15),las=2,labels=c("","",""))
 dev.off()
 
 #Rye####
-x<-"RYE"
-#create new dfs based on species
-s1plot<-rbind(s1[grep(x, s1$variable),])
-s2plot<-rbind(s2[grep(x, s2$variable),])
-s3plot<-rbind(s3[grep(x, s3$variable),])
-s4plot<-rbind(s4[grep(x, s4$variable),])
-s5plot<-rbind(s5[grep(x, s5$variable),])
-s6plot<-rbind(s6[grep(x, s6$variable),])
-
-#Separate treatments and other variables into separate columns
-s1plot<-separate(data=s1plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s2plot<-separate(data=s2plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s3plot<-separate(data=s3plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s4plot<-separate(data=s4plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s5plot<-separate(data=s5plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s6plot<-separate(data=s6plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-
-##combine all LUC data
-allplot<-rbind(s1plot,s2plot,s3plot,s4plot,s5plot,s6plot)
-
-##recognize variables as factors instead of characters
-allplot$Treatment<-as.factor(allplot$Treatment)
-allplot$Species<-as.factor(allplot$Species)
-allplot$Plot<-as.factor(allplot$Plot)
-allplot$Shelter<-as.factor(allplot$Shelter)
-
-##average and standard error by treatment
-allsum = data.table(allplot)
-allsum<-na.omit(allsum)
-allsum$Date<-as.Date(allsum$DateTime)
-allsum = allsum[,list(value = mean(value)), 'Plot,Shelter,Treatment,Date']
-allsum = allsum[,list(avg_value = mean(value), ste_value = sd(value)/sqrt(length(value))), 'Treatment,Date']
-allsum$upper<-allsum$avg_value+allsum$ste_value
-allsum$lower<-allsum$avg_value-allsum$ste_value
-
-#rename columns
-names(allsum)<-c("Treatment","Date","value","stderror","upper","lower")
-allsum$Treatment<-factor(allsum$Treatment,levels=c("UpperAmbCon","UpperAmbDrt"))
-allsum<-allsum[order(Date,Treatment),] 
-
-ymax<-max(allsum$value,na.rm=T) #use same temperature range across temperature charts
-ymin<-min(allsum$value,na.rm=T) #there is an NA value in a soil temp sensor data stream that is stopping the script
+#calculate max and min values for ylim, remove NAs
+ymax<-max(RYE1$upper,na.rm=T)
+ymin<-min(RYE1$lower,na.rm=T)
 
 ##subset each treatment to a different data set
-df1<-subset(allsum, Treatment == "UpperAmbCon")
-df2<-subset(allsum, Treatment == "UpperAmbDrt")
+df1<-subset(RYE1, Treatment == "AmbCon")
+df2<-subset(RYE1, Treatment == "AmbDrt")
 
 #export graphs to tiff####
-tiff(file = paste("FIELD",x,"Daily_Soil_Moisture",eD, ".tiff"), width = 3200, height = 2100, units = "px", res = 400) 
+tiff(file = paste("FIELD_RYE_Daily_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 3200, height = 2100, units = "px", res = 400)
 #RYE plot####
 #Soil moisture plot
 par(mar=c(5.1,4.1,4.1,3.1))
 plot(df1$value ~ df1$Date, 
      type = "l",
-     ylim = c(ymin-0.05,ymax+0.02),
+     ylim = c(ymin-0.05,ymax),
      ylab="",
      xlab="",
-     main="Soil Water Content in Rye Plots by Treatment",
+     main=paste("Soil Water Content in Rye Plots by Treatment\n",sD,"-",eD),
      col=4)
 mtext(side=2,"Soil Water Content",padj=-3.5)
 mtext(side=1,"Date",padj=3.5)
@@ -545,8 +343,8 @@ polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("b
 legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt"), 
        col = c(4,4),lty=c(1,2),lwd=1.5,cex=0.75)
-arrows(x0 =as.Date("2018-08-22"),length=0.05, y0 = 0.03, y1 = 0.0)
-text(x = as.Date("2018-08-22"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
+# arrows(x0 =as.Date("2018-08-22"),length=0.05, y0 = 0.03, y1 = 0.0)
+# text(x = as.Date("2018-08-22"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 
 #Irrigation plot
 par(new=TRUE)
@@ -558,7 +356,7 @@ plot(Irrig1$Irrigation~Irrig1$Date,
      xlab="",
      ylim = c(0,150))
 par(new=TRUE)
-with(Irrig2[Irrig2$Date>"2018-08-22"],plot(Irrigation~Date,
+with(Irrig2[Irrig2$Date>"2018-08-22",],plot(Irrigation~Date,
                                            type="h",
                                            col=2,
                                            axes=FALSE,
@@ -575,150 +373,30 @@ axis(side=4,at=c(5,10,15),las=2,labels=c("","",""))
 
 dev.off()
 
-#Restart####
-rm(list=ls())
-
-#write start date for first analysis
-sD<-as.Date("2018-05-01")
-#Write end date for first analysis
-eD<-as.Date("2019-05-01")
-
 #Soil Temperature####
-#only keep variables of interest
-s1 <- (downloadTOA5("PACE_AUTO_S1_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,19:26)] #only keep variables of interest
-s2 <- (downloadTOA5("PACE_AUTO_S2_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,19:26)]
-s3 <- (downloadTOA5("PACE_AUTO_S3_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,19:26)]
-s4 <- (downloadTOA5("PACE_AUTO_S4_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,19:26)]
-s5 <- (downloadTOA5("PACE_AUTO_S5_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,19:26)]
-s6 <- (downloadTOA5("PACE_AUTO_S6_BLWGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,19:26)]
-
-#Rename columns
-names(s1)<-c("DateTime","3LUCAmbDrt",
-             "3FESAmbDrt",
-             "4FESEleCon",
-             "4LUCEleCon",
-             "5LUCEleDrt",
-             "5FESEleDrt",
-             "6LUCAmbCon",
-             "6FESAmbCon")
-
-names(s2)<-c("DateTime","3LUCEleDrt",
-             "3FESEleDrt",
-             "4LUCAmbDrt",
-             "4FESAmbDrt",
-             "5LUCAmbCon",
-             "5FESAmbCon",
-             "6LUCEleCon",
-             "6FESEleCon")
-
-names(s3)<-c("DateTime","3FESAmbCon",
-             "3LUCAmbCon",
-             "4LUCEleCon",
-             "4FESEleCon",
-             "5FESEleDrt",
-             "5LUCEleDrt",
-             "6LUCAmbDrt",
-             "6FESAmbDrt")
-
-names(s4)<-c("DateTime","3LUCEleCon",
-             "3FESEleCon",
-             "4LUCAmbDrt",
-             "4FESAmbDrt",
-             "5FESAmbCon",
-             "5LUCAmbCon",
-             "6FESEleDrt",
-             "6LUCEleDrt")
-
-names(s5)<-c("DateTime","3FESEleCon",
-             "3LUCEleCon",
-             "4FESAmbDrt",
-             "4LUCAmbDrt",
-             "5FESEleDrt",
-             "5LUCEleDrt",
-             "6LUCAmbCon",
-             "6FESAmbCon")
-
-names(s6)<-c("DateTime","3LUCEleDrt",
-             "3FESEleDrt",
-             "4FESAmbCon",
-             "4LUCAmbCon",
-             "5LUCEleCon",
-             "5FESEleCon",
-             "6FESAmbDrt",
-             "6LUCAmbDrt")
-
-#convert to long form, add "shelter" variable
-s1<-melt(s1,id.vars="DateTime")
-s1$Shelter<-1
-s2<-melt(s2,id.vars="DateTime")
-s2$Shelter<-2
-s3<-melt(s3,id.vars="DateTime")
-s3$Shelter<-3
-s4<-melt(s4,id.vars="DateTime")
-s4$Shelter<-4
-s5<-melt(s5,id.vars="DateTime")
-s5$Shelter<-5
-s6<-melt(s6,id.vars="DateTime")
-s6$Shelter<-6
-
 #LUC####
-x<-"LUC"
-#create new dfs based on species
-s1plot<-rbind(s1[grep(x, s1$variable),])
-s2plot<-rbind(s2[grep(x, s2$variable),])
-s3plot<-rbind(s3[grep(x, s3$variable),])
-s4plot<-rbind(s4[grep(x, s4$variable),])
-s5plot<-rbind(s5[grep(x, s5$variable),])
-s6plot<-rbind(s6[grep(x, s6$variable),])
-
-#Separate treatments and other variables into separate columns
-s1plot<-separate(data=s1plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s2plot<-separate(data=s2plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s3plot<-separate(data=s3plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s4plot<-separate(data=s4plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s5plot<-separate(data=s5plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s6plot<-separate(data=s6plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-
-##combine all LUC data
-allplot<-rbind(s1plot,s2plot,s3plot,s4plot,s5plot,s6plot)
-
-##recognize variables as factors instead of characters
-allplot$Treatment<-as.factor(allplot$Treatment)
-allplot$Species<-as.factor(allplot$Species)
-allplot$Plot<-as.factor(allplot$Plot)
-allplot$Shelter<-as.factor(allplot$Shelter)
-allplot$Date<-date(allplot$DateTime)
-
-##average and standard error by treatment
-allsum = data.table(allplot)
-allsum<-na.omit(allsum)
-allsum = allsum[,list(value = mean(value)), 'Plot,Shelter,Treatment,Date']
-allsum = allsum[,list(avg_value = mean(value), ste_value = sd(value)/sqrt(length(value))), 'Treatment,Date']
-allsum$upper<-allsum$avg_value+allsum$ste_value
-allsum$lower<-allsum$avg_value-allsum$ste_value
-
-#rename columns, reorder by date and treatment
-names(allsum)<-c("Treatment","Date","value","stderror","upper","lower")
-allsum<-allsum[order(Date,Treatment),] 
-
-ymax<-max(allsum$value,na.rm=T) #use same temperature range across temperature charts
-ymin<-min(allsum$value,na.rm=T) #there is an NA value in a soil temp sensor data stream that is stopping the script
+#calculate max and min values for ylim, remove NAs
+ymax<-max(LUC2$upper,na.rm=T) 
+ymin<-min(LUC2$lower,na.rm=T) 
 
 ##subset each treatment to a different data set
-df1<-subset(allsum, Treatment == "AmbCon")
-df2<-subset(allsum, Treatment == "AmbDrt")
-df3<-subset(allsum, Treatment == "EleCon")
-df4<-subset(allsum, Treatment == "EleDrt")
+n<-levels(LUC2$Treatment)
+count=1
+for(i in n){
+   x<-subset(LUC2, Treatment == i)
+   assign(paste("df",count,sep=""),x)
+   count=count+1
+}
 
 ##export to tiff file####
-tiff(file = paste("FIELD",x,"Daily_Soil_Temperature",eD, ".tiff"), width = 3200, height = 2100, units = "px", res = 400) 
+tiff(file = paste("FIELD_LUC_Daily_Soil_Temperature",sD,"_",eD,".tiff",sep=""), width = 3200, height = 2100, units = "px", res = 400) 
 #Luc temp plot####
 plot(df1$value ~ df1$Date, 
      type = "l",
-     ylim = c(ymin-2,ymax),
+     ylim = c(ymin,ymax),
      ylab=expression(paste("Temperature (",degree~C,")")),
      xlab="Date",
-     main="Soil Temperature in Lucerne Plots by Treatment",
+     main=paste("Soil Temperature in Lucerne Plots by Treatment\n",sD,"-",eD),
      col=4)
 polygon(c(df1$Date,rev(df1$Date)),c(df1$lower,rev(df1$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
 points(df2$value ~ df2$Date, type = "l",col=4,lty=2)
@@ -730,75 +408,36 @@ polygon(c(df4$Date,rev(df4$Date)),c(df4$lower,rev(df4$upper)),col=adjustcolor("r
 legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
        col = c(4,4,2,2),lty=c(1,2,1,2),lwd=2,cex=0.8)
-arrows(x0 =as.Date("2018-08-23"),length=0.05, y0 = 8, y1 = 6.5)
-text(x = as.Date("2018-08-23"), y = 8.5,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
-arrows(x0 =as.Date("2018-12-01"),length=0.05, y0 = 8, y1 = 6.5)
-text(x = as.Date("2018-12-01"), y = 8.5,labels=expression(paste("Drought Treatment Completed")),cex=0.6)
+# arrows(x0 =as.Date("2018-08-23"),length=0.05, y0 = 8, y1 = 6.5)
+# text(x = as.Date("2018-08-23"), y = 8.5,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
+# arrows(x0 =as.Date("2018-12-01"),length=0.05, y0 = 8, y1 = 6.5)
+# text(x = as.Date("2018-12-01"), y = 8.5,labels=expression(paste("Drought Treatment Completed")),cex=0.6)
 
 dev.off()
 
-#remove extra objects####
-rm('x','allplot','allsum','df1','df2','df3','df4',
-   's1plot','s2plot','s3plot','s4plot','s5plot','s6plot','ymax','ymin')
-
 #FES####
-x<-"FES"
-#create new dfs based on species
-s1plot<-rbind(s1[grep(x, s1$variable),])
-s2plot<-rbind(s2[grep(x, s2$variable),])
-s3plot<-rbind(s3[grep(x, s3$variable),])
-s4plot<-rbind(s4[grep(x, s4$variable),])
-s5plot<-rbind(s5[grep(x, s5$variable),])
-s6plot<-rbind(s6[grep(x, s6$variable),])
-
-#Separate treatments and other variables into separate columns
-s1plot<-separate(data=s1plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s2plot<-separate(data=s2plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s3plot<-separate(data=s3plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s4plot<-separate(data=s4plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s5plot<-separate(data=s5plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-s6plot<-separate(data=s6plot, col=variable, c("Plot","Species", "Treatment"), sep = c(1,4), remove = TRUE)
-
-##combine all LUC data
-allplot<-rbind(s1plot,s2plot,s3plot,s4plot,s5plot,s6plot)
-
-##recognize variables as factors instead of characters
-allplot$Treatment<-as.factor(allplot$Treatment)
-allplot$Species<-as.factor(allplot$Species)
-allplot$Plot<-as.factor(allplot$Plot)
-allplot$Shelter<-as.factor(allplot$Shelter)
-allplot$Date<-date(allplot$DateTime)
-
-##average and standard error by treatment
-allsum = data.table(allplot)
-allsum<-na.omit(allsum)
-allsum = allsum[,list(value = mean(value)), 'Plot,Shelter,Treatment,Date']
-allsum = allsum[,list(avg_value = mean(value), ste_value = sd(value)/sqrt(length(value))), 'Treatment,Date']
-allsum$upper<-allsum$avg_value+allsum$ste_value
-allsum$lower<-allsum$avg_value-allsum$ste_value
-
-#rename columns, reorder by date and treatment
-names(allsum)<-c("Treatment","Date","value","stderror","upper","lower")
-allsum<-allsum[order(Date,Treatment),] 
-
-ymax<-max(allsum$value,na.rm=T) #use same temperature range across temperature charts
-ymin<-min(allsum$value,na.rm=T) #there is an NA value in a soil temp sensor data stream that is stopping the script
+#calculate max and min values for ylim, remove NAs
+ymax<-max(FES2$upper,na.rm=T) 
+ymin<-min(FES2$lower,na.rm=T)
 
 ##subset each treatment to a different data set
-df1<-subset(allsum, Treatment == "AmbCon")
-df2<-subset(allsum, Treatment == "AmbDrt")
-df3<-subset(allsum, Treatment == "EleCon")
-df4<-subset(allsum, Treatment == "EleDrt")
+n<-levels(FES2$Treatment)
+count=1
+for(i in n){
+   x<-subset(FES2, Treatment == i)
+   assign(paste("df",count,sep=""),x)
+   count=count+1
+}
 
 ##export to tiff file####
-tiff(file = paste("FIELD",x,"Daily_Soil_Temperature",eD, ".tiff"), width = 3200, height = 2100, units = "px", res = 400) 
+tiff(file = paste("FIELD_FES_Daily_Soil_Temperature",sD,"_",eD,".tiff",sep=""), width = 3200, height = 2100, units = "px", res = 400)  
 #Fes temp plot####
 plot(df1$value ~ df1$Date, 
      type = "l",
-     ylim = c(ymin-2,ymax),
+     ylim = c(ymin,ymax),
      ylab=expression(paste("Temperature (",degree~C,")")),
      xlab="Date",
-     main="Soil Temperature in Fescue Plots by Treatment",
+     main=paste("Soil Temperature in Fescue Plots by Treatment\n",sD,"-",eD),
      col=4)
 polygon(c(df1$Date,rev(df1$Date)),c(df1$lower,rev(df1$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
 points(df2$value ~ df2$Date, type = "l",col=4,lty=2)
@@ -810,12 +449,9 @@ polygon(c(df4$Date,rev(df4$Date)),c(df4$lower,rev(df4$upper)),col=adjustcolor("r
 legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
        col = c(4,4,2,2),lty=c(1,2,1,2),lwd=2,cex=0.8)
-arrows(x0 =as.Date("2018-06-01"),length=0.05, y0 = 8, y1 = 6.5)
-text(x = as.Date("2018-06-01"), y = 8.5,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
-arrows(x0 =as.Date("2018-12-01"),length=0.05, y0 = 8, y1 = 6.5)
-text(x = as.Date("2018-12-01"), y = 8.5,labels=expression(paste("Drought Treatment Completed")),cex=0.6)
+# arrows(x0 =as.Date("2018-06-01"),length=0.05, y0 = 8, y1 = 6.5)
+# text(x = as.Date("2018-06-01"), y = 8.5,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
+# arrows(x0 =as.Date("2018-12-01"),length=0.05, y0 = 8, y1 = 6.5)
+# text(x = as.Date("2018-12-01"), y = 8.5,labels=expression(paste("Drought Treatment Completed")),cex=0.6)
 
 dev.off()
-
-#remove all objects####
-rm(list=ls())
