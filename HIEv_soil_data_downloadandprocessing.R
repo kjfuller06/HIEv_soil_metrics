@@ -58,6 +58,8 @@ df1<-na.omit(df1)
 
 #Summarize data
 df1<-aggregate(data=df1,value~SensorType+Sp+Date+Position+Treatment+Shelter+Plot,FUN=mean,simplify=TRUE,drop=TRUE)
+CSM<-df1
+backup<-df1
 df1<-aggregate(data=df1,value~SensorType+Sp+Date+Position+Treatment,FUN=function(x) c(avg=mean(x),upper=mean(x)+sd(x)/sqrt(length(x)),lower=mean(x)-sd(x)/sqrt(length(x))),simplify=TRUE,drop=TRUE)
 
 #spit the aggregate function outputs into a DF and reassign so they are variables in the dataframe
@@ -68,17 +70,18 @@ df1$upper<-val$upper
 df1$lower<-val$lower
 
 #separate data frame by data type and species
-SM<-df1[df1$SensorType=="TDR",]
-for(i in levels(SM$Sp)){
-    x<-SM[SM$Sp==i,]
+RSM<-df1[df1$SensorType=="TDR",]
+for(i in levels(RSM$Sp)){
+    x<-RSM[RSM$Sp==i,]
     x<-x[order(x$Date,x$Treatment),]
     assign(paste(i,1,sep=""),x)
 }
-ST<-df1[df1$SensorType=="Temp",]
-for(i in levels(ST$Sp)){
-   x<-ST[ST$Sp==i,]
+RST<-df1[df1$SensorType=="Temp",]
+for(i in c("LUC","FES")){
+   x<-RST[RST$Sp==i,]
    x<-x[order(x$Date,x$Treatment),]
    assign(paste(i,2,sep=""),x)
 }
 
-safety<-df1
+
+
