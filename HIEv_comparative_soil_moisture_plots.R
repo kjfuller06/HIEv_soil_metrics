@@ -1,39 +1,88 @@
-#Calculate different between treatments
-##subset each treatment to a different data set
-n1<-levels(LUC1$Position)
-n2<-levels(LUC1$Treatment)
+#backup dataframe, select only soil moisture data and combine the position and treatment columns
+CSM<-backup
+CSM<-CSM[CSM$SensorType=="TDR",]
+CSM$Treat2<-as.factor(paste(CSM$Position,CSM$Treatment,sep=""))
+CSM<-subset(CSM, select=-c(Position,Treatment,Plot))
+
+#convert to long form
+CSM<-spread(CSM,Treat2,value)
+
+#split data back up for calculations
+n<-levels(CSM$Sp)
 count=1
-for(i in n1){
-  x1<-LUC1[LUC1$Position==i,]
-  for(i in n2){
-    x2<-droplevels(subset(x1, Treatment == i))
-    assign(paste("df",count,sep=""),x2)
-    count=count+1
+for(i in n){
+  x<-CSM[CSM$Sp==i,]
+  assign(paste("df",count,sep=""),x)
+  count<-count+1
   }
+
+#Calculate the difference between treatments
+#Bis
+df1$UpperAmbDrt<-df1$UpperAmbDrt-df1$UpperAmbCon
+df1$UpperAmbCon<-0
+df1<-subset(df1, select=c(Sp,Date,Shelter,UpperAmbCon,UpperAmbDrt))
+
+#Fes
+df2$UpperAmbDrt<-df2$UpperAmbDrt-df2$UpperAmbCon
+df2$UpperEleCon<-df2$UpperEleCon-df2$UpperAmbCon
+df2$UpperEleDrt<-df2$UpperEleDrt-df2$UpperAmbCon
+df2$UpperAmbCon<-0
+df2<-subset(df2, select=c(Sp,Date,Shelter,UpperAmbCon,UpperAmbDrt,UpperEleCon,UpperEleDrt))
+
+#Luc
+df3$UpperAmbDrt<-df3$UpperAmbDrt-df3$UpperAmbCon
+df3$UpperEleCon<-df3$UpperEleCon-df3$UpperAmbCon
+df3$UpperEleDrt<-df3$UpperEleDrt-df3$UpperAmbCon
+df3$UpperAmbCon<-0
+df3$LowerAmbDrt<-df3$LowerAmbDrt-df3$LowerAmbCon
+df3$LowerEleCon<-df3$LowerEleCon-df3$LowerAmbCon
+df3$LowerEleDrt<-df3$LowerEleDrt-df3$LowerAmbCon
+df3$LowerAmbCon<-0
+df3<-subset(df3, select=-c(SensorType))
+
+#Rye
+df4$UpperAmbDrt<-df4$UpperAmbDrt-df4$UpperAmbCon
+df4$UpperAmbCon<-0
+df4<-subset(df4, select=c(Sp,Date,Shelter,UpperAmbCon,UpperAmbDrt))
+
+#convert back to longform
+dfs<-list(df1,df2,df3,df4)
+count=1
+for(i in c(1:4)){
+  x<-melt(dfs[[i]], id.vars=c("Sp","Date","Shelter"))
+  #calculate the variance
+  x<-aggregate(data=x,value~Date+variable,FUN=function(x) c(avg=mean(x),upper=mean(x)+sd(x)/sqrt(length(x)),lower=mean(x)-sd(x)/sqrt(length(x))),simplify=TRUE,drop=TRUE)
+  #spit the aggregate function outputs into a DF and reassign so they are variables in the dataframe
+  ##otherwise the output is a list within df1
+  val<-data.frame(x[["value"]])
+  x$value<-val$avg
+  x$upper<-val$upper
+  x$lower<-val$lower
+  assign(paste("df",count,sep=""),x)
+  count<-count+1
 }
 
-#compare the upper sensors to the control
-df2$value<-df1$value-df2$value
-df3$value<-df1$value-df3$value
-df4$value<-df1$value-df4$value
+#rename for convenience
+BIS<-df1
+FES<-df2
+LUC<-df3
+RYE<-df4
 
-#compare the lower sensors to the control
-df6$value<-df5$value-df6$value
-df7$value<-df5$value-df7$value
-df8$value<-df5$value-df8$value
+#split data back up for graphing
+BIS<-split(BIS,BIS$variable)
+FES<-split(FES,FES$variable)
+LUC<-split(LUC,LUC$variable)
+RYE<-split(RYE,RYE$variable)
 
 #LUC####
-#calculate max and min values for ylim, remove NAs
-ymax<-max(df2$value,na.rm=T)
-ymin<-min(df2$value,na.rm=T) 
 
 #export graphs to tiff
-tiff(file = paste("FIELD_LUC_Comp_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 3200, height = 2100, units = "px", res = 400) 
+tiff(file = paste("FIELD_LUC_Comp_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 1600, height = 1050, units = "px", res = 200) 
 #Raw soil moisture plot
 par(mfrow=c(2,1),oma=c(4,3,3,0))
 #Upper sensors
 par(mar =c(0,0,0,3))
-plot(df2$value ~ df2$Date, 
+with(LUC[[2]],plot(value ~ Date, 
      type = "l",lwd=0.75,
      xaxt='n',
      ylim = c(-0.10,0.10),
@@ -42,21 +91,21 @@ plot(df2$value ~ df2$Date,
      main="",
      col=4,
      lty=2,
-     cex.axis=0.75)
+     cex.axis=0.75))
 mtext(side=3,"Surface to 15cm",padj=2,cex=0.75)
-# polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
-points(df3$value ~ df3$Date, type = "l",col=2,lwd=0.75)
-# polygon(c(df3$Date,rev(df3$Date)),c(df3$lower,rev(df3$upper)),col=adjustcolor("blue",alpha.f=0.25),density=25)
-points(df4$value ~ df4$Date, type = "l",col=2,lwd=0.75,lty=2)
-# polygon(c(df4$Date,rev(df4$Date)),c(df4$lower,rev(df4$upper)),col=adjustcolor("red",alpha.f=0.5),border=NA)
+# polygon(c(df12$Date,rev(df12$Date)),c(df12$lower,rev(df12$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
+with(LUC[[3]],points(value ~ Date, type = "l",col=2,lwd=0.75))
+# polygon(c(df13$Date,rev(df13$Date)),c(df13$lower,rev(df13$upper)),col=adjustcolor("blue",alpha.f=0.25),density=25)
+with(LUC[[4]],points(value ~ Date, type = "l",col=2,lwd=0.75,lty=2))
+# polygon(c(df14$Date,rev(df14$Date)),c(df14$lower,rev(df14$upper)),col=adjustcolor("red",alpha.f=0.5),border=NA)
 legend("topright", y = NULL, 
-       legend=c("aT-Drt","eT-Con","eT-Drt"), 
-       col = c(4,2,2),lty=c(2,1,2),lwd=1.5,cex=0.75)
+       legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
+       col = c(1,4,2,2),lty=c(2,2,1,2),lwd=1.5,cex=0.75)
 abline(h=0,lty=2)
 
 #Lower sensors
 par(mar = c(1,0,0,3))
-plot(df6$value ~ df6$Date, 
+with(LUC[[6]],plot(value ~ Date, 
      type = "l",lwd=0.75,
      ylim = c(-0.10,0.10),
      ylab="",
@@ -65,15 +114,15 @@ plot(df6$value ~ df6$Date,
      lty=2,
      cex.main=0.75,
      cex.axis=0.75,
-     xaxt='n')
-axis.Date(side=1,x=df6$Date,cex.axis=0.75)
+     xaxt='n'))
+with(LUC[[6]],axis.Date(side=1,x=Date,cex.axis=0.75))
 box(which = "plot", lty = "solid")
 mtext(side=3,"15cm to 30cm",padj=2,cex=0.75)
-# polygon(c(df6$Date,rev(df6$Date)),c(df6$lower,rev(df6$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
-points(df7$value ~ df7$Date, type = "l",col=2,lwd=0.75)
-# polygon(c(df7$Date,rev(df7$Date)),c(df7$lower,rev(df7$upper)),col=adjustcolor("blue",alpha.f=0.25),density=25)
-points(df8$value ~ df8$Date, type = "l",col=2,lwd=0.75,lty=2)
-# polygon(c(df8$Date,rev(df8$Date)),c(df8$lower,rev(df8$upper)),col=adjustcolor("red",alpha.f=0.5),border=NA)
+# polygon(c(df8$Date,rev(df8$Date)),c(df8$lower,rev(df8$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
+with(LUC[[7]],points(value ~ Date, type = "l",col=2,lwd=0.75))
+# polygon(c(df9$Date,rev(df9$Date)),c(df9$lower,rev(df9$upper)),col=adjustcolor("blue",alpha.f=0.25),density=25)
+with(LUC[[8]],points(value ~ Date, type = "l",col=2,lwd=0.75,lty=2))
+# polygon(c(df10$Date,rev(df10$Date)),c(df10$lower,rev(df10$upper)),col=adjustcolor("red",alpha.f=0.5),border=NA)
 # arrows(x0 =as.Date("2018-08-23"),length=0.05, y0 = 0.025, y1 = -0.015)
 # text(x = as.Date("2018-08-23"), y = 0.03,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 abline(h=0,lty=2)
@@ -111,43 +160,33 @@ dev.off()
 
 #FES####
 #calculate max and min values for ylim, remove NAs
-ymax<-max(FES1$upper,na.rm=T) 
-ymin<-min(FES1$lower,na.rm=T) 
-
-##subset each treatment to a different data set
-n<-levels(FES1$Treatment)
-count=1
-for(i in n){
-  x<-subset(FES1, Treatment == i)
-  assign(paste("df",count,sep=""),x)
-  count=count+1
-}
+# ymax<-max(FES1$upper,na.rm=T) 
+# ymin<-min(FES1$lower,na.rm=T) 
 
 #export graphs to tiff
-tiff(file = paste("FIELD_FES_Daily_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 3200, height = 2100, units = "px", res = 400)
+tiff(file = paste("FIELD_FES_Comp_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 1600, height = 1050, units = "px", res = 200)
 #Raw soil moisture plot
 par(mar=c(5.1,4.1,4.1,3.1))
-plot(df1$value ~ df1$Date, 
+with(FES[[2]],plot(value ~ Date, 
      type = "l",
-     ylim = c(ymin-0.05,ymax),
+     ylim = c(-0.10,0.10),
      ylab="",
      xlab="",
      main=paste("Soil Water Content in Fescue Plots by Treatment\n",sD,"-",eD),
-     col=4)
+     col=4))
 mtext(side=2,"Soil Water Content",padj=-3.5)
 mtext(side=1,"Date",padj=3.5)
-polygon(c(df1$Date,rev(df1$Date)),c(df1$lower,rev(df1$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
-points(df2$value ~ df2$Date, type = "l",col=4,lty=2)
-polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("blue",alpha.f=0.25),density=25)
-points(df3$value ~ df3$Date, type = "l",col=2)
-polygon(c(df3$Date,rev(df3$Date)),c(df3$lower,rev(df3$upper)),col=adjustcolor("red",alpha.f=0.5),border=NA)
-points(df4$value ~ df4$Date, type = "l",col=2,lty=2)
-polygon(c(df4$Date,rev(df4$Date)),c(df4$lower,rev(df4$upper)),col=adjustcolor("red",alpha.f=0.25),density=25)
+# polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("blue",alpha.f=0.25),density=25)
+with(FES[[3]],points(value ~ Date, type = "l",col=4,lty=2))
+# polygon(c(df3$Date,rev(df3$Date)),c(df3$lower,rev(df3$upper)),col=adjustcolor("red",alpha.f=0.5),border=NA)
+with(FES[[4]],points(value ~ Date, type = "l",col=2))
+# polygon(c(df4$Date,rev(df4$Date)),c(df4$lower,rev(df4$upper)),col=adjustcolor("red",alpha.f=0.25),density=25)
 legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
-       col = c(4,4,2,2),lty=c(1,2,1,2),lwd=1.5,cex=0.75)
+       col = c(1,4,2,2),lty=c(2,2,1,2),lwd=1.5,cex=0.75)
 # arrows(x0 =as.Date("2018-06-01"),length=0.05, y0 = 0.03, y1 = 0.01)
 # text(x = as.Date("2018-06-01"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
+abline(h=0,lty=2)
 
 #Irrigation plot
 par(new=TRUE)
@@ -178,35 +217,30 @@ dev.off()
 
 #Bis####
 #calculate max and min values for ylim, remove NAs
-ymax<-max(BIS1$upper,na.rm=T)
-ymin<-min(BIS1$lower,na.rm=T)
-
-##subset each treatment to a different data set
-df1<-subset(BIS1, Treatment == "AmbCon")
-df2<-subset(BIS1, Treatment == "AmbDrt")
+# ymax<-max(BIS1$upper,na.rm=T)
+# ymin<-min(BIS1$lower,na.rm=T)
 
 #export graphs to tiff
-tiff(file = paste("FIELD_BIS_Daily_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 3200, height = 2100, units = "px", res = 400)
+tiff(file = paste("FIELD_BIS_Comp_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 1600, height = 1050, units = "px", res = 200)
 #Raw soil moisture plot
 par(mar=c(5.1,4.1,4.1,3.1))
-plot(df1$value ~ df1$Date, 
+with(BIS[[2]],plot(value ~ Date, 
      type = "l",
-     ylim = c(ymin-0.05,ymax),
+     ylim = c(-0.15,0.05),
      ylab="",
      xlab="",
      main=paste("Soil Water Content in Biserrula Plots by Treatment\n",sD,"-",eD),
-     col=4)
+     col=4,
+     lty=2))
 mtext(side=2,"Soil Water Content",padj=-3.5)
 mtext(side=1,"Date",padj=3.5)
-polygon(c(df1$Date,rev(df1$Date)),c(df1$lower,rev(df1$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
-points(df2$value ~ df2$Date, type = "l",col=4,lty=2)
-polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("blue",alpha.f=0.25),density=25)
+# polygon(c(df1$Date,rev(df1$Date)),c(df1$lower,rev(df1$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
 legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt"), 
-       col = c(4,4),lty=c(1,2),lwd=1.5,cex=0.75)
+       col = c(1,4),lty=c(2,2),lwd=1.5,cex=0.75)
 # arrows(x0 =as.Date("2018-08-22"),length=0.05, y0 = 0.03, y1 = 0.0)
 # text(x = as.Date("2018-08-22"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
-
+abline(h=0,lty=2)
 
 #Irrigation plot
 par(new=TRUE)
@@ -237,34 +271,30 @@ dev.off()
 
 #Rye####
 #calculate max and min values for ylim, remove NAs
-ymax<-max(RYE1$upper,na.rm=T)
-ymin<-min(RYE1$lower,na.rm=T)
-
-##subset each treatment to a different data set
-df1<-subset(RYE1, Treatment == "AmbCon")
-df2<-subset(RYE1, Treatment == "AmbDrt")
+# ymax<-max(RYE1$upper,na.rm=T)
+# ymin<-min(RYE1$lower,na.rm=T)
 
 #export graphs to tiff
-tiff(file = paste("FIELD_RYE_Daily_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 3200, height = 2100, units = "px", res = 400)
+tiff(file = paste("FIELD_RYE_Comp_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 1600, height = 1050, units = "px", res = 200)
 #Raw soil moisture plot
 par(mar=c(5.1,4.1,4.1,3.1))
-plot(df1$value ~ df1$Date, 
+with(RYE[[2]],plot(value ~ Date, 
      type = "l",
-     ylim = c(ymin-0.05,ymax),
+     ylim = c(-0.15,0.05),
      ylab="",
      xlab="",
      main=paste("Soil Water Content in Rye Plots by Treatment\n",sD,"-",eD),
-     col=4)
+     col=4,
+     lty=2))
 mtext(side=2,"Soil Water Content",padj=-3.5)
 mtext(side=1,"Date",padj=3.5)
-polygon(c(df1$Date,rev(df1$Date)),c(df1$lower,rev(df1$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
-points(df2$value ~ df2$Date, type = "l",col=4,lty=2)
-polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("blue",alpha.f=0.25),density=25)
+# polygon(c(df1$Date,rev(df1$Date)),c(df1$lower,rev(df1$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
 legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt"), 
        col = c(4,4),lty=c(1,2),lwd=1.5,cex=0.75)
 # arrows(x0 =as.Date("2018-08-22"),length=0.05, y0 = 0.03, y1 = 0.0)
 # text(x = as.Date("2018-08-22"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
+abline(h=0,lty=2)
 
 #Irrigation plot
 par(new=TRUE)
