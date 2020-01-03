@@ -29,19 +29,23 @@ plot(df1$value ~ df1$Date,
      ylab="",
      xlab="",
      main="",
-     col=4,
+     col=1,
      cex.axis=0.75)
 mtext(side=3,"Surface to 15cm",padj=2,cex=0.75)
-polygon(c(df1$Date,rev(df1$Date)),c(df1$lower,rev(df1$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
-points(df2$value ~ df2$Date, type = "l",col=4,lwd=0.75,lty=2)
-polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("blue",alpha.f=0.25),density=25)
-points(df3$value ~ df3$Date, type = "l",col=2,lwd=0.75)
-polygon(c(df3$Date,rev(df3$Date)),c(df3$lower,rev(df3$upper)),col=adjustcolor("red",alpha.f=0.5),border=NA)
-points(df4$value ~ df4$Date, type = "l",col=2,lwd=0.75,lty=2)
-polygon(c(df4$Date,rev(df4$Date)),c(df4$lower,rev(df4$upper)),col=adjustcolor("red",alpha.f=0.25),density=25)
+with(df1,polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA))
+with(df1,points(value ~ Date, type = "l",col=1,lwd=0.75,lty=1))
+with(df2,polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA))
+with(df2,points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+with(df3,polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.5),border=NA))
+with(df3,points(value ~ Date, type = "l",col=1,lwd=0.75))
+with(df4,polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.5),border=NA))
+with(df4,points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
 legend("topright", y = NULL, 
        legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
-       col = c(4,4,2,2),lty=c(1,2,1,2),lwd=1.5,cex=0.75)
+       col = c(adjustcolor("blue",alpha.f=0.5),adjustcolor("lightskyblue",alpha.f=0.5),adjustcolor("red",alpha.f=0.5),adjustcolor("red4",alpha.f=0.5)),lwd=10,cex=0.75)
+legend("topright", y = NULL, 
+       legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
+       col = c(1,1,1,1),lty=c(2,2,1,2),lwd=1.5,cex=0.75,bty='n')
 
 #Lower sensors
 par(mar = c(1,0,0,3))
@@ -57,13 +61,14 @@ plot(df5$value ~ df5$Date,
 axis.Date(side=1,x=df5$Date,cex.axis=0.75)
 box(which = "plot", lty = "solid")
 mtext(side=3,"15cm to 30cm",padj=2,cex=0.75)
-polygon(c(df5$Date,rev(df5$Date)),c(df5$lower,rev(df5$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
-points(df6$value ~ df6$Date, type = "l",col=4,lwd=0.75,lty=2)
-polygon(c(df6$Date,rev(df6$Date)),c(df6$lower,rev(df6$upper)),col=adjustcolor("blue",alpha.f=0.25),density=25)
-points(df7$value ~ df7$Date, type = "l",col=2,lwd=0.75)
-polygon(c(df7$Date,rev(df7$Date)),c(df7$lower,rev(df7$upper)),col=adjustcolor("red",alpha.f=0.5),border=NA)
-points(df8$value ~ df8$Date, type = "l",col=2,lwd=0.75,lty=2)
-polygon(c(df8$Date,rev(df8$Date)),c(df8$lower,rev(df8$upper)),col=adjustcolor("red",alpha.f=0.25),density=25)
+with(df5,polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA))
+with(df5,points(value ~ Date, type = "l",col=1,lwd=0.75,lty=1))
+with(df6,polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA))
+with(df6,points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+with(df7,polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.5),border=NA))
+with(df7,points(value ~ Date, type = "l",col=1,lwd=0.75))
+with(df8,polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.5),border=NA))
+with(df8,points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
 # arrows(x0 =as.Date("2018-08-23"),length=0.05, y0 = 0.025, y1 = -0.015)
 # text(x = as.Date("2018-08-23"), y = 0.03,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 
@@ -122,19 +127,22 @@ plot(df1$value ~ df1$Date,
      ylab="",
      xlab="",
      main=paste("Soil Water Content in Fescue Plots by Treatment\n",sD,"-",eD),
-     col=4)
+     col=1)
 mtext(side=2,"Soil Water Content",padj=-3.5)
 mtext(side=1,"Date",padj=3.5)
-polygon(c(df1$Date,rev(df1$Date)),c(df1$lower,rev(df1$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
-points(df2$value ~ df2$Date, type = "l",col=4,lty=2)
-polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("blue",alpha.f=0.25),density=25)
-points(df3$value ~ df3$Date, type = "l",col=2)
-polygon(c(df3$Date,rev(df3$Date)),c(df3$lower,rev(df3$upper)),col=adjustcolor("red",alpha.f=0.5),border=NA)
-points(df4$value ~ df4$Date, type = "l",col=2,lty=2)
-polygon(c(df4$Date,rev(df4$Date)),c(df4$lower,rev(df4$upper)),col=adjustcolor("red",alpha.f=0.25),density=25)
-legend("topleft", y = NULL, 
+with(df1,polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA))
+with(df1,points(value ~ Date, type = "l",col=1,lwd=0.75,lty=1))
+with(df2,polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA))
+with(df2,points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+with(df3,polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.5),border=NA))
+with(df3,points(value ~ Date, type = "l",col=1,lwd=0.75))
+with(df4,polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.5),border=NA))
+with(df4,points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+legend("topright", y = NULL, 
        legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
-       col = c(4,4,2,2),lty=c(1,2,1,2),lwd=1.5,cex=0.75)
+       col = c(adjustcolor("blue",alpha.f=0.5),adjustcolor("lightskyblue",alpha.f=0.5),adjustcolor("red",alpha.f=0.5),adjustcolor("red4",alpha.f=0.5)),lwd=c(10,10,10,10),cex=0.75)
+legend("topright", y = NULL, 
+       legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"),lty=c(1,2,1,2),lwd=1.5,cex=0.75,bty='n')
 # arrows(x0 =as.Date("2018-06-01"),length=0.05, y0 = 0.03, y1 = 0.01)
 # text(x = as.Date("2018-06-01"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 
@@ -184,15 +192,19 @@ plot(df1$value ~ df1$Date,
      ylab="",
      xlab="",
      main=paste("Soil Water Content in Biserrula Plots by Treatment\n",sD,"-",eD),
-     col=4)
+     col=1)
 mtext(side=2,"Soil Water Content",padj=-3.5)
 mtext(side=1,"Date",padj=3.5)
 polygon(c(df1$Date,rev(df1$Date)),c(df1$lower,rev(df1$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
-points(df2$value ~ df2$Date, type = "l",col=4,lty=2)
-polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("blue",alpha.f=0.25),density=25)
-legend("topleft", y = NULL, 
+points(df1$value ~ df1$Date, type = "l",col=1)
+polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA)
+points(df2$value ~ df2$Date, type = "l",col=1,lty=2)
+legend("topright", y = NULL, 
        legend=c("aT-Con","aT-Drt"), 
-       col = c(4,4),lty=c(1,2),lwd=1.5,cex=0.75)
+       col = c(adjustcolor("blue",alpha.f=0.5),adjustcolor("lightskyblue",alpha.f=0.5)),lwd=c(10,10),cex=0.75)
+legend("topright", y = NULL, 
+       legend=c("aT-Con","aT-Drt"), 
+       col = c(1,1),lty=c(1,2),lwd=1.5,cex=0.75,bty='n')
 # arrows(x0 =as.Date("2018-08-22"),length=0.05, y0 = 0.03, y1 = 0.0)
 # text(x = as.Date("2018-08-22"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 
@@ -243,15 +255,19 @@ plot(df1$value ~ df1$Date,
      ylab="",
      xlab="",
      main=paste("Soil Water Content in Rye Plots by Treatment\n",sD,"-",eD),
-     col=4)
+     col=1)
 mtext(side=2,"Soil Water Content",padj=-3.5)
 mtext(side=1,"Date",padj=3.5)
 polygon(c(df1$Date,rev(df1$Date)),c(df1$lower,rev(df1$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
-points(df2$value ~ df2$Date, type = "l",col=4,lty=2)
-polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("blue",alpha.f=0.25),density=25)
-legend("topleft", y = NULL, 
+points(df1$value ~ df1$Date, type = "l",col=1)
+polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA)
+points(df2$value ~ df2$Date, type = "l",col=1,lty=2)
+legend("topright", y = NULL, 
        legend=c("aT-Con","aT-Drt"), 
-       col = c(4,4),lty=c(1,2),lwd=1.5,cex=0.75)
+       col = c(adjustcolor("blue",alpha.f=0.5),adjustcolor("lightskyblue",alpha.f=0.5)),lwd=c(10,10),cex=0.75)
+legend("topright", y = NULL, 
+       legend=c("aT-Con","aT-Drt"), 
+       col = c(1,1),lty=c(1,2),lwd=1.5,cex=0.75,bty='n')
 # arrows(x0 =as.Date("2018-08-22"),length=0.05, y0 = 0.03, y1 = 0.0)
 # text(x = as.Date("2018-08-22"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 
