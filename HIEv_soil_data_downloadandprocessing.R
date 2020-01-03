@@ -42,44 +42,47 @@ s6<-reshape2::melt(s6,id.vars="DateTime")
 s6$Shelter<-6
 
 #combine into one DF
-df1<-rbind(s1,s2,s3,s4,s5,s6)
-names(df1)<-c("DateTime","SensorCode","value","Shelter")
+soil<-rbind(s1,s2,s3,s4,s5,s6)
+names(soil)<-c("DateTime","SensorCode","value","Shelter")
 sensors<-read.csv("sensors.csv")
-df1<-merge(df1,sensors,by=c("Shelter","SensorCode"))
+soil<-merge(soil,sensors,by=c("Shelter","SensorCode"))
+soil$Treat<-as.factor(paste(soil$Position,soil$Treatment,sep=""))
 
 #change class of variables
-df1$Sp<-as.factor(df1$Sp)
-df1$Plot<-as.factor(df1$Plot)
-df1$Shelter<-as.factor(df1$Shelter)
-df1$Date<-as.Date(df1$DateTime)
+soil$Sp<-as.factor(soil$Sp)
+soil$Plot<-as.factor(soil$Plot)
+soil$Shelter<-as.factor(soil$Shelter)
+soil$Date<-as.Date(soil$DateTime)
 
 #remove NAs
-df1<-na.omit(df1)
+soil<-na.omit(soil)
 
 #Summarize data
-df1<-aggregate(data=df1,value~SensorType+Sp+Date+Position+Treatment+Shelter+Plot,FUN=mean,simplify=TRUE,drop=TRUE)
-CSM<-df1
-backup<-df1
-df1<-aggregate(data=df1,value~SensorType+Sp+Date+Position+Treatment,FUN=function(x) c(avg=mean(x),upper=mean(x)+sd(x)/sqrt(length(x)),lower=mean(x)-sd(x)/sqrt(length(x))),simplify=TRUE,drop=TRUE)
+soil<-aggregate(data=soil,value~SensorType+Sp+Date+Position+Treat+Shelter+Plot,FUN=mean,simplify=TRUE,drop=TRUE)
+CSM<-soil
+backup<-soil
+soil<-aggregate(data=soil,value~SensorType+Sp+Date+Position+Treat,FUN=function(x) c(avg=mean(x),upper=mean(x)+sd(x)/sqrt(length(x)),lower=mean(x)-sd(x)/sqrt(length(x))),simplify=TRUE,drop=TRUE)
 
 #spit the aggregate function outputs into a DF and reassign so they are variables in the dataframe
-##otherwise the output is a list within df1
-val<-data.frame(df1[["value"]])
-df1$value<-val$avg
-df1$upper<-val$upper
-df1$lower<-val$lower
+##otherwise the output is a list within soil
+val<-data.frame(soil[["value"]])
+soil$value<-val$avg
+soil$upper<-val$upper
+soil$lower<-val$lower
 
 #separate data frame by data type and species
-RSM<-df1[df1$SensorType=="TDR",]
+RSM<-soil[soil$SensorType=="TDR",]
 for(i in levels(RSM$Sp)){
     x<-RSM[RSM$Sp==i,]
-    x<-x[order(x$Date,x$Treatment),]
+    x<-droplevels(x)
+    x<-x[order(x$Date,x$Treat),]
     assign(paste(i,1,sep=""),x)
 }
-RST<-df1[df1$SensorType=="Temp",]
+RST<-soil[soil$SensorType=="Temp",]
 for(i in c("LUC","FES")){
    x<-RST[RST$Sp==i,]
-   x<-x[order(x$Date,x$Treatment),]
+   x<-droplevels(x)
+   x<-x[order(x$Date,x$Treat),]
    assign(paste(i,2,sep=""),x)
 }
 

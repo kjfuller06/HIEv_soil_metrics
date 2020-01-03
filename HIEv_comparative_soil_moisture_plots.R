@@ -1,11 +1,12 @@
+#Compare soil moisture between control and treatments####
+#Calculate differences and format data####
 #backup dataframe, select only soil moisture data and combine the position and treatment columns
 CSM<-backup
 CSM<-CSM[CSM$SensorType=="TDR",]
-CSM$Treat2<-as.factor(paste(CSM$Position,CSM$Treatment,sep=""))
-CSM<-subset(CSM, select=-c(Position,Treatment,Plot))
+CSM<-subset(CSM, select=-c(Position,Plot))
 
 #convert to long form
-CSM<-spread(CSM,Treat2,value)
+CSM<-spread(CSM,Treat,value)
 
 #split data back up for calculations
 n<-levels(CSM$Sp)
@@ -63,16 +64,16 @@ for(i in c(1:4)){
 }
 
 #rename for convenience
-BIS<-df1
-FES<-df2
-LUC<-df3
-RYE<-df4
+CBIS<-df1
+CFES<-df2
+CLUC<-df3
+CRYE<-df4
 
 #split data back up for graphing
-BIS<-split(BIS,BIS$variable)
-FES<-split(FES,FES$variable)
-LUC<-split(LUC,LUC$variable)
-RYE<-split(RYE,RYE$variable)
+CBIS<-split(CBIS,CBIS$variable)
+CFES<-split(CFES,CFES$variable)
+CLUC<-split(CLUC,CLUC$variable)
+CRYE<-split(CRYE,CRYE$variable)
 
 #LUC####
 
@@ -82,7 +83,7 @@ tiff(file = paste("FIELD_LUC_Comp_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), wid
 par(mfrow=c(2,1),oma=c(4,3,3,0))
 #Upper sensors
 par(mar =c(0,0,0,3))
-with(LUC[[2]],plot(value ~ Date, 
+with(CLUC[[2]],plot(value ~ Date, 
      type = "l",lwd=0.75,
      xaxt='n',
      ylim = c(-0.10,0.10),
@@ -93,12 +94,12 @@ with(LUC[[2]],plot(value ~ Date,
      lty=2,
      cex.axis=0.75))
 mtext(side=3,"Surface to 15cm",padj=2,cex=0.75)
-with(LUC[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA))
-with(LUC[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
-with(LUC[[3]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.5),border=NA))
-with(LUC[[3]],points(value ~ Date, type = "l",col=1,lwd=0.75))
-with(LUC[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.5),border=NA))
-with(LUC[[4]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+with(CLUC[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA))
+with(CLUC[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+with(CLUC[[3]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.5),border=NA))
+with(CLUC[[3]],points(value ~ Date, type = "l",col=1,lwd=0.75))
+with(CLUC[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.5),border=NA))
+with(CLUC[[4]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
 legend("topright", y = NULL, 
        legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
        col = c(1,adjustcolor("lightskyblue",alpha.f=0.5),adjustcolor("red",alpha.f=0.5),adjustcolor("red4",alpha.f=0.5)),lty=c(2,1,1,1),lwd=c(1.5,10,10,10),cex=0.75)
@@ -109,7 +110,7 @@ abline(h=0,lty=2)
 
 #Lower sensors
 par(mar = c(1,0,0,3))
-with(LUC[[6]],plot(value ~ Date, 
+with(CLUC[[6]],plot(value ~ Date, 
      type = "l",lwd=0.75,
      ylim = c(-0.10,0.09),
      ylab="",
@@ -119,15 +120,15 @@ with(LUC[[6]],plot(value ~ Date,
      cex.main=0.75,
      cex.axis=0.75,
      xaxt='n'))
-with(LUC[[6]],axis.Date(side=1,x=Date,cex.axis=0.75))
+with(CLUC[[6]],axis.Date(side=1,x=Date,cex.axis=0.75))
 box(which = "plot", lty = "solid")
 mtext(side=3,"15cm to 30cm",padj=2,cex=0.75)
-with(LUC[[6]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA))
-with(LUC[[6]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
-with(LUC[[7]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.5),border=NA))
-with(LUC[[7]],points(value ~ Date, type = "l",col=1,lwd=0.75))
-with(LUC[[8]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.5),border=NA))
-with(LUC[[8]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+with(CLUC[[6]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA))
+with(CLUC[[6]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+with(CLUC[[7]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.5),border=NA))
+with(CLUC[[7]],points(value ~ Date, type = "l",col=1,lwd=0.75))
+with(CLUC[[8]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.5),border=NA))
+with(CLUC[[8]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
 # arrows(x0 =as.Date("2018-08-23"),length=0.05, y0 = 0.025, y1 = -0.015)
 # text(x = as.Date("2018-08-23"), y = 0.03,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 abline(h=0,lty=2)
@@ -172,7 +173,7 @@ dev.off()
 tiff(file = paste("FIELD_FES_Comp_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 1600, height = 1050, units = "px", res = 200)
 #Raw soil moisture plot
 par(mar=c(5.1,4.1,4.1,3.1))
-with(FES[[2]],plot(value ~ Date, 
+with(CFES[[2]],plot(value ~ Date, 
      type = "l",
      ylim = c(-0.10,0.10),
      ylab="",
@@ -182,12 +183,12 @@ with(FES[[2]],plot(value ~ Date,
      lty=2))
 mtext(side=2,"Soil Water Content",padj=-3.5)
 mtext(side=1,"Date",padj=3.5)
-with(FES[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA))
-with(FES[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
-with(FES[[3]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.5),border=NA))
-with(FES[[3]],points(value ~ Date, type = "l",col=1,lwd=0.75))
-with(FES[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.5),border=NA))
-with(FES[[4]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+with(CFES[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA))
+with(CFES[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+with(CFES[[3]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.5),border=NA))
+with(CFES[[3]],points(value ~ Date, type = "l",col=1,lwd=0.75))
+with(CFES[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.5),border=NA))
+with(CFES[[4]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
 legend("topright", y = NULL, 
        legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
        col = c(1,adjustcolor("lightskyblue",alpha.f=0.5),adjustcolor("red",alpha.f=0.5),adjustcolor("red4",alpha.f=0.5)),lty=c(2,1,1,1),lwd=c(1.5,10,10,10),cex=0.75)
@@ -225,27 +226,27 @@ axis(side=4,at=c(5,10,15),las=2,labels=c("","",""))
 
 dev.off()
 
-#Bis####
+#BIS####
 #calculate max and min values for ylim, remove NAs
-# ymax<-max(BIS1$upper,na.rm=T)
-# ymin<-min(BIS1$lower,na.rm=T)
+# ymax<-max(BIS$upper,na.rm=T)
+# ymin<-min(BIS$lower,na.rm=T)
 
 #export graphs to tiff
 tiff(file = paste("FIELD_BIS_Comp_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 1600, height = 1050, units = "px", res = 200)
 #Raw soil moisture plot
 par(mar=c(5.1,4.1,4.1,3.1))
-with(BIS[[2]],plot(value ~ Date, 
+with(CBIS[[2]],plot(value ~ Date, 
      type = "l",
      ylim = c(-0.15,0.05),
      ylab="",
      xlab="",
-     main=paste("Soil Water Content in Biserrula Plots by Treatment\n",sD,"-",eD),
+     main=paste("Soil Water Content in BISerrula Plots by Treatment\n",sD,"-",eD),
      col=1,
      lty=2))
 mtext(side=2,"Soil Water Content",padj=-3.5)
 mtext(side=1,"Date",padj=3.5)
-with(BIS[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA))
-with(BIS[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+with(CBIS[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA))
+with(CBIS[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
 legend("topright", y = NULL, 
        legend=c("aT-Con","aT-Drt"), 
        col = c(1,adjustcolor("lightskyblue",alpha.f=0.5)),lty=c(2,1),lwd=c(1.5,10),cex=0.75)
@@ -292,7 +293,7 @@ dev.off()
 tiff(file = paste("FIELD_RYE_Comp_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 1600, height = 1050, units = "px", res = 200)
 #Raw soil moisture plot
 par(mar=c(5.1,4.1,4.1,3.1))
-with(RYE[[2]],plot(value ~ Date, 
+with(CRYE[[2]],plot(value ~ Date, 
      type = "l",
      ylim = c(-0.15,0.05),
      ylab="",
@@ -302,8 +303,8 @@ with(RYE[[2]],plot(value ~ Date,
      lty=2))
 mtext(side=2,"Soil Water Content",padj=-3.5)
 mtext(side=1,"Date",padj=3.5)
-with(RYE[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA))
-with(RYE[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+with(CRYE[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA))
+with(CRYE[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
 legend("topright", y = NULL, 
        legend=c("aT-Con","aT-Drt"), 
        col = c(1,adjustcolor("lightskyblue",alpha.f=0.5)),lty=c(2,1),lwd=c(1.5,10),cex=0.75)
