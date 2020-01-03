@@ -306,7 +306,7 @@ with(RYE[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lig
 with(RYE[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
 legend("topright", y = NULL, 
        legend=c("aT-Con","aT-Drt"), 
-       col = c(1,adjustcolor("lightskyblue",alpha.f=0.5),adjustcolor("red",alpha.f=0.5),adjustcolor("red4",alpha.f=0.5)),lty=c(2,1),lwd=c(1.5,10),cex=0.75)
+       col = c(1,adjustcolor("lightskyblue",alpha.f=0.5)),lty=c(2,1),lwd=c(1.5,10),cex=0.75)
 legend("topright", y = NULL, 
        legend=c("aT-Con","aT-Drt"), 
        col = c(1,1),lty=c(2,2),lwd=1.5,cex=0.75,bty='n')
