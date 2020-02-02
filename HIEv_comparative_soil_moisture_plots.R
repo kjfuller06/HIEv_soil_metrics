@@ -171,28 +171,27 @@ dev.off()
 
 #export graphs to tiff
 tiff(file = paste("FIELD_FES_Comp_Soil_Moisture_",sD,"_",eD,".tiff",sep=""), width = 1600, height = 1050, units = "px", res = 200)
-#Raw soil moisture plot
-par(mar=c(5.1,4.1,4.1,3.1))
+#Comparative soil moisture plot
+par(mar=c(5.1,5.1,4.1,3.1))
 with(CFES[[2]],plot(value ~ Date, 
-     type = "l",
-     ylim = c(-0.10,0.10),
-     ylab="",
-     xlab="",
-     main=paste("Soil Water Content in Fescue Plots by Treatment\n",sD,"-",eD),
-     col=1,
-     lty=2))
-mtext(side=2,"Soil Water Content",padj=-3.5)
-mtext(side=1,"Date",padj=3.5)
-with(CFES[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.5),border=NA))
-with(CFES[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
-with(CFES[[3]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.5),border=NA))
+                    type = "l",
+                    bty='l',
+                    ylim = c(-0.12,0.10),
+                    ylab="",
+                    xlab="",
+                    col=1,
+                    lty=2))
+mtext(side=2,"Soil Volumetric Water Content (%)",padj=-3.5)
+with(CFES[[3]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.65),border=NA))
 with(CFES[[3]],points(value ~ Date, type = "l",col=1,lwd=0.75))
-with(CFES[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.5),border=NA))
+with(CFES[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.65),border=NA))
 with(CFES[[4]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
-legend("topright", y = NULL, 
+with(CFES[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.85),border=NA))
+with(CFES[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
-       col = c(1,adjustcolor("lightskyblue",alpha.f=0.5),adjustcolor("red",alpha.f=0.5),adjustcolor("red4",alpha.f=0.5)),lty=c(2,1,1,1),lwd=c(1.5,10,10,10),cex=0.75)
-legend("topright", y = NULL, 
+       col = c(1,adjustcolor("lightskyblue",alpha.f=0.85),adjustcolor("red",alpha.f=0.65),adjustcolor("red4",alpha.f=0.65)),lty=c(2,1,1,1),lwd=c(1.5,10,10,10),cex=0.75)
+legend("topleft", y = NULL, 
        legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
        col = c(1,1,1,1),lty=c(2,2,1,2),lwd=1.5,cex=0.75,bty='n')
 # arrows(x0 =as.Date("2018-06-01"),length=0.05, y0 = 0.03, y1 = 0.01)
@@ -220,11 +219,12 @@ plot(Irrig2$Irrigation~Irrig2$Date,
      xlim=c(min(Irrig1$Date),max(Irrig1$Date)))
 corners2 = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 par(xpd = TRUE) #Draw outside plot area
-text(x = corners2[2]+corners2[2]/850, y = mean(corners2[3:4])-66, "Irrigation\n(mm)",srt=270,cex=0.6)
-text(x = corners2[2]+corners2[2]/1800, y = mean(corners2[3:4])-65, "20\n10\n0",las=0,cex=0.65)
-axis(side=4,at=c(5,10,15),las=2,labels=c("","",""))
+text(x = corners2[2]+corners2[2]/850, y = mean(corners2[3:4])-mean(corners2[3:4])/1.15, "Irrigation\n(mm)",srt=270,cex=0.6)
+text(x = corners2[2]+corners2[2]/1800, y = mean(corners2[3:4])-mean(corners2[3:4])/1.165, "20\n\n10\n\n0",las=0,cex=0.55)
+axis(side=4,at=c(0,10,20),las=2,labels=c("","",""))
 
 dev.off()
+
 
 #BIS####
 #calculate max and min values for ylim, remove NAs

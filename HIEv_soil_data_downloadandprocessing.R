@@ -1,7 +1,7 @@
 #start date
-sD<-as.Date("2018-05-21")
+sD<-as.Date("2018-06-01")
 #end date
-eD<-as.Date("2019-05-25")
+eD<-as.Date("2019-05-30")
 
 #Irrigation####
 Irrig<- (downloadTOA5("PACE_AUTO_ALL_IRRIG_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,4:6)]
@@ -44,7 +44,7 @@ s6$Shelter<-6
 #combine into one DF
 soil<-rbind(s1,s2,s3,s4,s5,s6)
 names(soil)<-c("DateTime","SensorCode","value","Shelter")
-sensors<-read.csv("sensors.csv")
+sensors<-read.csv("soilsensors.csv")
 soil<-merge(soil,sensors,by=c("Shelter","SensorCode"))
 soil$Treat<-as.factor(paste(soil$Position,soil$Treatment,sep=""))
 
