@@ -60,7 +60,7 @@ soil<-na.omit(soil)
 #Summarize data
 soil<-aggregate(data=soil,value~SensorType+Sp+Date+Position+Treat+Shelter+Plot,FUN=mean,simplify=TRUE,drop=TRUE)
 CSM<-soil
-backup<-soil
+backup1<-soil
 soil<-aggregate(data=soil,value~SensorType+Sp+Date+Position+Treat,FUN=function(x) c(avg=mean(x),upper=mean(x)+sd(x)/sqrt(length(x)),lower=mean(x)-sd(x)/sqrt(length(x))),simplify=TRUE,drop=TRUE)
 
 #spit the aggregate function outputs into a DF and reassign so they are variables in the dataframe
@@ -95,7 +95,7 @@ rRYE<-split(RYE1,droplevels(RYE1$Treat))
 
 #Calculate differences and format data####
 #backup dataframe, select only soil moisture data and combine the position and treatment columns
-CSM<-backup
+CSM<-backup1
 CSM<-CSM[CSM$SensorType=="TDR",]
 CSM<-subset(CSM, select=-c(Position,Plot))
 

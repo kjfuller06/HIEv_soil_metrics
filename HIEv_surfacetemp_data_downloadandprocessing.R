@@ -1,24 +1,24 @@
 #start date
 sD<-as.Date("2018-06-01")
-#end date
+#end date
 eD<-as.Date("2019-05-30")
 
 #Irrigation####
-Irrig<- (downloadTOA5("PACE_AUTO_ALL_IRRIG_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,4:6)]
-
-#Rename columns
-names(Irrig)<-c("DateTime","Plot","Treatment","Irrigation")
-Irrig$Date<-as.Date(Irrig$DateTime)
-
-#force Treatment to be a factor
-Irrig$Treatment<-as.factor(Irrig$Treatment)
-Irrig<-Irrig[order(Irrig$Date,Irrig$Treatment),]
-Irrig<-aggregate(data=Irrig,Irrigation~Date+Treatment,FUN=mean)
-levels(Irrig$Treatment)<-c("Con","Drt","Con","Drt")
-
-#subset data by treatment
-Irrig1<-subset(Irrig, Treatment == "Con")
-Irrig2<-subset(Irrig[Irrig$Date>"2018-05-31"&Irrig$Date<"2018-12-01",], Treatment == "Drt")
+# Irrig<- (downloadTOA5("PACE_AUTO_ALL_IRRIG_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,4:6)]
+# 
+# #Rename columns
+# names(Irrig)<-c("DateTime","Plot","Treatment","Irrigation")
+# Irrig$Date<-as.Date(Irrig$DateTime)
+# 
+# #force Treatment to be a factor
+# Irrig$Treatment<-as.factor(Irrig$Treatment)
+# Irrig<-Irrig[order(Irrig$Date,Irrig$Treatment),]
+# Irrig<-aggregate(data=Irrig,Irrigation~Date+Treatment,FUN=mean)
+# levels(Irrig$Treatment)<-c("Con","Drt","Con","Drt")
+# 
+# #subset data by treatment
+# Irrig1<-subset(Irrig, Treatment == "Con")
+# Irrig2<-subset(Irrig[Irrig$Date>"2018-05-31"&Irrig$Date<"2018-12-01",], Treatment == "Drt")
 
 #Aboveground data####
 #download data from HIEv and only keep variables of interest
@@ -56,14 +56,18 @@ abv$Date<-as.Date(abv$DateTime)
 airT<-abv[abv$SensorType=="AirT",]
 airT<-subset(airT,select=-c(Treatment,Plot,SensorType,SensorCode))
 airT<-na.omit(airT)
-airT<-aggregate(data=airT[airT$Position=="In",],value~Date,FUN=mean,simplify=TRUE,drop=TRUE)
+airT<-aggregate(data=airT[airT$Position=="In",],value~Date,FUN=function(x) c(avg=mean(x),maxT=max(x),minT=min(x)),simplify=TRUE,drop=TRUE)
+val<-data.frame(airT[["value"]])
+airT$value<-val$avg
+airT$maxT<-val$maxT
+airT$minT<-val$minT
 
 #processing for surface temperature data####
 surf<-abv[abv$SensorType=="SurfaceTemp",]
 surf<-na.omit(surf)
 #Calculate surface temperature mean and extremes
 surf<-aggregate(data=surf,value~Date+Treatment+Shelter+Plot,FUN=function(x) c(avg=mean(x),maxT=max(x),minT=min(x)),simplify=TRUE,drop=TRUE)
-backup<-surf
+backup2<-surf
 #spit the aggregate function outputs into a DF and reassign so they are variables in the dataframe
 ##otherwise the output is a list within surf
 val<-data.frame(surf[["value"]])
@@ -76,8 +80,15 @@ vars<-c("value","maxT","minT")
 surf<-lapply(vars,function(x){
    aggregate(surf[x],by=c(surf['Date'],surf['Treatment']),FUN=function(x) c(avg=mean(x),upper=mean(x)+sd(x)/sqrt(length(x)),lower=mean(x)-sd(x)/sqrt(length(x))),simplify=TRUE,drop=TRUE)
 })
-backup<-surf
+backup2<-surf
 
 #bind outputs into useable form
 surf2<-merge(as.data.frame(surf[[1]]),as.data.frame(surf[[2]]),by=c("Date","Treatment"))
 surf<-merge(surf2,as.data.frame(surf[[3]]),by=c("Date","Treatment"))
+
+#format for graphing
+max<-subset(surf,select=c(-value,-minT))
+max<-split(max,droplevels(max$Treatment))
+
+min<-subset(surf,select=c(-value,-maxT))
+min<-split(min,droplevels(min$Treatment))
