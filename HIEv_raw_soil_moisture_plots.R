@@ -1,11 +1,4 @@
 #visualise raw soil moisture data####
-#format data for visualisation####
-#split data for graphing
-rBIS<-split(BIS1,droplevels(BIS1$Treat))
-rFES<-split(FES1,droplevels(FES1$Treat))
-rLUC<-split(LUC1,droplevels(LUC1$Treat))
-rRYE<-split(RYE1,droplevels(RYE1$Treat))
-
 #LUC####
 #calculate max and min values for ylim, remove NAs
 ymax<-max(LUC1$upper,na.rm=T) 

@@ -86,5 +86,86 @@ for(i in c("LUC","FES")){
    assign(paste(i,2,sep=""),x)
 }
 
+#format data for visualisation####
+#split data for graphing
+rBIS<-split(BIS1,droplevels(BIS1$Treat))
+rFES<-split(FES1,droplevels(FES1$Treat))
+rLUC<-split(LUC1,droplevels(LUC1$Treat))
+rRYE<-split(RYE1,droplevels(RYE1$Treat))
 
+#Calculate differences and format data####
+#backup dataframe, select only soil moisture data and combine the position and treatment columns
+CSM<-backup
+CSM<-CSM[CSM$SensorType=="TDR",]
+CSM<-subset(CSM, select=-c(Position,Plot))
+
+#convert to long form
+CSM<-spread(CSM,Treat,value)
+
+#split data back up for calculations
+n<-levels(CSM$Sp)
+count=1
+for(i in n){
+   x<-CSM[CSM$Sp==i,]
+   assign(paste("df",count,sep=""),x)
+   count<-count+1
+}
+
+#Calculate the difference between treatments
+#Bis
+df1$UpperAmbDrt<-df1$UpperAmbDrt-df1$UpperAmbCon
+df1$UpperAmbCon<-0
+df1<-subset(df1, select=c(Sp,Date,Shelter,UpperAmbCon,UpperAmbDrt))
+
+#Fes
+df2$UpperAmbDrt<-df2$UpperAmbDrt-df2$UpperAmbCon
+df2$UpperEleCon<-df2$UpperEleCon-df2$UpperAmbCon
+df2$UpperEleDrt<-df2$UpperEleDrt-df2$UpperAmbCon
+df2$UpperAmbCon<-0
+df2<-subset(df2, select=c(Sp,Date,Shelter,UpperAmbCon,UpperAmbDrt,UpperEleCon,UpperEleDrt))
+
+#Luc
+df3$UpperAmbDrt<-df3$UpperAmbDrt-df3$UpperAmbCon
+df3$UpperEleCon<-df3$UpperEleCon-df3$UpperAmbCon
+df3$UpperEleDrt<-df3$UpperEleDrt-df3$UpperAmbCon
+df3$UpperAmbCon<-0
+df3$LowerAmbDrt<-df3$LowerAmbDrt-df3$LowerAmbCon
+df3$LowerEleCon<-df3$LowerEleCon-df3$LowerAmbCon
+df3$LowerEleDrt<-df3$LowerEleDrt-df3$LowerAmbCon
+df3$LowerAmbCon<-0
+df3<-subset(df3, select=-c(SensorType))
+
+#Rye
+df4$UpperAmbDrt<-df4$UpperAmbDrt-df4$UpperAmbCon
+df4$UpperAmbCon<-0
+df4<-subset(df4, select=c(Sp,Date,Shelter,UpperAmbCon,UpperAmbDrt))
+
+#convert back to longform
+dfs<-list(df1,df2,df3,df4)
+count=1
+for(i in c(1:4)){
+   x<-melt(dfs[[i]], id.vars=c("Sp","Date","Shelter"))
+   #calculate the variance
+   x<-aggregate(data=x,value~Date+variable,FUN=function(x) c(avg=mean(x),upper=mean(x)+sd(x)/sqrt(length(x)),lower=mean(x)-sd(x)/sqrt(length(x))),simplify=TRUE,drop=TRUE)
+   #spit the aggregate function outputs into a DF and reassign so they are variables in the dataframe
+   ##otherwise the output is a list within df1
+   val<-data.frame(x[["value"]])
+   x$value<-val$avg
+   x$upper<-val$upper
+   x$lower<-val$lower
+   assign(paste("df",count,sep=""),x)
+   count<-count+1
+}
+
+#rename for convenience
+CBIS<-df1
+CFES<-df2
+CLUC<-df3
+CRYE<-df4
+
+#split data back up for graphing
+CBIS<-split(CBIS,CBIS$variable)
+CFES<-split(CFES,CFES$variable)
+CLUC<-split(CLUC,CLUC$variable)
+CRYE<-split(CRYE,CRYE$variable)
 
