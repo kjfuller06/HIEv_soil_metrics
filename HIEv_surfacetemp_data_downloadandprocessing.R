@@ -56,7 +56,10 @@ abv$Date<-as.Date(abv$DateTime)
 airT<-abv[abv$SensorType=="AirT",]
 airT<-subset(airT,select=-c(Treatment,Plot,SensorType,SensorCode))
 airT<-na.omit(airT)
-airT<-aggregate(data=airT[airT$Position=="In",],value~Date,FUN=function(x) c(avg=mean(x),maxT=max(x),minT=min(x)),simplify=TRUE,drop=TRUE)
+airT<-airT[airT$Position=="In",]
+airT<-airT %>% 
+  dplyr::filter(DateTime != as.POSIXct("2018-10-18 14:05:00", tz="UTC")&DateTime != as.POSIXct("2018-10-18 14:20:00", tz="UTC")&DateTime != as.POSIXct("2018-10-18 14:25:00", tz="UTC"))
+airT<-aggregate(data=airT,value~Date,FUN=function(x) c(avg=mean(x),maxT=max(x),minT=min(x)),simplify=TRUE,drop=TRUE)
 val<-data.frame(airT[["value"]])
 airT$value<-val$avg
 airT$maxT<-val$maxT
@@ -92,3 +95,4 @@ max<-split(max,droplevels(max$Treatment))
 
 min<-subset(surf,select=c(-value,-maxT))
 min<-split(min,droplevels(min$Treatment))
+
