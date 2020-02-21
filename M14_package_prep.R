@@ -2,7 +2,6 @@
 .libPaths("C:/Users/90946112/R/win-library/3.6.2")
 
 #load packages for downloadTOA5 function
-library(tidyr)
 # library(gdata)
 library(devtools)
 library(data.table)
