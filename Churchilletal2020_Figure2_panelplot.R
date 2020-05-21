@@ -1,4 +1,4 @@
-#this code fits with all Churchilletal2020_Figure2 files: surfacetemp_datadownloadandprocessing, raw_soil_moisture_plots, comparative_soil_moisture_plots and raw_surface_temperature_plots scripts and continues on to put the four plots from these scripts together for a publication- Fescue raw and comparative soil moisture and surface temperature extremes for the facility
+#this code fits with all Churchilletal2020_Figure2 files: surfacetemp_datadownloadandprocessing, raw_surface_temperature_plots, soil_data_downloadandprocessing, raw_soil_moisture_plots and comparative_soil_moisture_plots scripts. Continues on to put the four plots from these scripts together for a publication- Fescue raw and comparative soil moisture and surface temperature extremes for the facility
 
 #multipanel
 tiff(file = paste("FIELD_env_plots_",sD,"_",eD,".tiff",sep=""), width =1100, height = 1400, units = "px", res = 200)
