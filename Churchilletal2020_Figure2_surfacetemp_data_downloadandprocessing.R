@@ -70,7 +70,7 @@ surf<-abv[abv$SensorType=="SurfaceTemp",]
 surf<-na.omit(surf)
 #Calculate surface temperature mean and extremes
 surf<-aggregate(data=surf,value~Date+Treatment+Shelter+Plot,FUN=function(x) c(avg=mean(x),maxT=max(x),minT=min(x)),simplify=TRUE,drop=TRUE)
-backup2<-surf
+backup3<-surf
 #spit the aggregate function outputs into a DF and reassign so they are variables in the dataframe
 ##otherwise the output is a list within surf
 val<-data.frame(surf[["value"]])
@@ -81,9 +81,9 @@ surf$minT<-val$minT
 #summarise by treatment
 vars<-c("value","maxT","minT")
 surf<-lapply(vars,function(x){
-   aggregate(surf[x],by=c(surf['Date'],surf['Treatment']),FUN=function(x) c(avg=mean(x),upper=mean(x)+sd(x)/sqrt(length(x)),lower=mean(x)-sd(x)/sqrt(length(x))),simplify=TRUE,drop=TRUE)
+   aggregate(surf[x],by=c(surf['Date'],surf['Treatment']),FUN=mean, simplify=TRUE,drop=TRUE)
 })
-backup2<-surf
+backup4<-surf
 
 #bind outputs into useable form
 surf2<-merge(as.data.frame(surf[[1]]),as.data.frame(surf[[2]]),by=c("Date","Treatment"))
