@@ -109,9 +109,8 @@ rLUC<-split(LUC1,droplevels(LUC1$Treat))
 rRYE<-split(RYE1,droplevels(RYE1$Treat))
 
 #Calculate differences and format data####
-#backup dataframe, select only soil moisture data and combine the position and treatment columns
-CSM<-backup1
-CSM<-CSM[CSM$SensorType=="TDR",]
+#backup dataframe and combine the position and treatment columns
+backup2<-CSM
 CSM<-subset(CSM, select=-c(Position,Plot))
 
 #convert to long form
