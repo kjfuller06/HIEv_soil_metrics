@@ -72,7 +72,7 @@ with(CFES[[2]],plot(value ~ Date,
                     lty=2,
                     xaxt='n',
                     cex.axis=0.65))
-mtext(side=2,"Soil Volumetric\nWater Content (%)",padj=-1.5,cex=.5)
+mtext(side=2,"Relative Soil Volumetric\nWater Content (%)",padj=-1.5,cex=.5)
 mtext(side=2,"B)",line=3.5,cex=0.9,las=2)
 with(CFES[[3]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.65),border=NA))
 with(CFES[[3]],points(value ~ Date, type = "l",col=1,lwd=0.75))
