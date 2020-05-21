@@ -123,7 +123,7 @@ ymin<-min(airT$value,na.rm=T)
 
 #Raw surface temperature plot
 par(fig=c(0.1,0.99,0.30625,0.5375),new=TRUE)
-with(max[[1]],plot(maxT[,1] ~ Date, 
+with(max[[1]],plot(maxT ~ Date, 
                    type = "l",
                    bty='l',
                    ylim = c(ymin-0.05,ymax),
@@ -135,11 +135,11 @@ with(max[[1]],plot(maxT[,1] ~ Date,
 mtext(side=2,expression(paste("Temperature (",degree~C,")")),padj=-3,cex=.5)
 mtext(side=2,"C)",line=3.5,cex=0.9,las=2)
 # with(max[[3]],polygon(c(Date,rev(Date)),c(maxT[,3],rev(maxT[,2])),col=adjustcolor("red",alpha.f=0.65),border=NA))
-with(max[[3]],points(maxT[,1] ~ Date, type = "l",col="red"))
+with(max[[3]],points(maxT ~ Date, type = "l",col="red"))
 # with(max[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.65),border=NA))
-with(max[[4]],points(maxT[,1] ~ Date, type = "l",col="red4",lty=2))
+with(max[[4]],points(maxT ~ Date, type = "l",col="red4",lty=2))
 # with(max[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.85),border=NA))
-with(max[[2]],points(maxT[,1] ~ Date, type = "l",col="lightskyblue",lty=2))
+with(max[[2]],points(maxT ~ Date, type = "l",col="lightskyblue",lty=2))
 with(airT,points(maxT~Date,type="l"))
 # arrows(x0 =as.Date("2018-06-01"),length=0.05, y0 = 0.03, y1 = 0.01)
 # text(x = as.Date("2018-06-01"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
@@ -155,7 +155,7 @@ ymin<-min(surf$minT,na.rm=T)
 
 #Raw surface temperature plot
 par(fig=c(0.1,0.99,0.075,0.30625),new=TRUE)
-with(min[[1]],plot(minT[,1] ~ Date, 
+with(min[[1]],plot(minT ~ Date, 
                    type = "l",
                    bty='l',
                    ylim = c(ymin-5,ymax),
@@ -166,11 +166,11 @@ with(min[[1]],plot(minT[,1] ~ Date,
 mtext(side=2,expression(paste("Temperature (",degree~C,")")),padj=-3,cex=.5)
 mtext(side=2,"D)",line=3.5,cex=0.9,las=2)
 # with(min[[3]],polygon(c(Date,rev(Date)),c(minT[,3],rev(minT[,2])),col=adjustcolor("red",alpha.f=0.65),border=NA))
-with(min[[3]],points(minT[,1] ~ Date, type = "l",col="red"))
+with(min[[3]],points(minT ~ Date, type = "l",col="red"))
 # with(min[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.65),border=NA))
-with(min[[4]],points(minT[,1] ~ Date, type = "l",col="red4",lty=2))
+with(min[[4]],points(minT ~ Date, type = "l",col="red4",lty=2))
 # with(min[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.85),border=NA))
-with(min[[2]],points(minT[,1] ~ Date, type = "l",col="lightskyblue",lty=2))
+with(min[[2]],points(minT ~ Date, type = "l",col="lightskyblue",lty=2))
 with(airT,points(minT~Date,type="l"))
 legend(legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt","Minimum Air Temp"),lty=c(1,3,1,3,1),col=c("blue","lightskyblue","red","red4","black"),lwd=1.5,cex=0.5,box.lwd=0,box.col="white",bg="white",x=min(max[[1]]$Date)-14,y=ymax)
 corners = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
