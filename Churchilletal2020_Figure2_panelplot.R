@@ -3,10 +3,11 @@
 #multipanel
 tiff(file = paste("FIELD_env_plots_",sD,"_",eD,".tiff",sep=""), width =1100, height = 1400, units = "px", res = 200)
 
+## Figure 2A: raw soil moisture
 #calculate max and min values for ylim, remove NAs
 ymax<-max(FES1$upper,na.rm=T) 
 ymin<-min(FES1$lower,na.rm=T) 
-#Plot1: raw soil moisture
+
 par(cex=0.7, mai=c(0.1,0.1,0.1,0.35))
 #height increments: 0.23125
 par(fig=c(0.1,0.99,0.76875,1),new=TRUE)
@@ -60,7 +61,7 @@ text(x = corners2[2]+corners2[2]/1800, y = mean(corners2[3:4])-mean(corners2[3:4
 axis(side=4,at=c(0,10,20),las=2,labels=c("","",""))
 
 
-#Plot2: comparative soil moisture
+## Figure 2B: comparative soil moisture
 par(fig=c(0.1,0.99,0.5375,0.76875),new=TRUE)
 with(CFES[[2]],plot(value ~ Date, 
                     type = "l",
@@ -116,7 +117,7 @@ text(x = corners2[2]+corners2[2]/850, y = mean(corners2[3:4])-mean(corners2[3:4]
 text(x = corners2[2]+corners2[2]/1800, y = mean(corners2[3:4])-mean(corners2[3:4])/1.165, "20\n\n10\n\n0",las=0,cex=0.55)
 axis(side=4,at=c(0,10,20),las=2,labels=c("","",""))
 
-#Plot3: Max surface temperatures
+## Figure 2C: Max surface temperatures
 ymax<-max(surf$maxT,na.rm=T) 
 ymin<-min(airT$value,na.rm=T) 
 
@@ -148,7 +149,7 @@ abline(h=40,lty=2)
 abline(h=45,lty=2)
 legend(legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt","Maximum Air Temp"),lty=c(1,3,1,3,1),col=c("blue","lightskyblue","red","red4","black"),lwd=1.5,cex=0.5,box.lwd=0,box.col="white",bg="white",x=min(max[[1]]$Date)-14,y=ymax+1)
 
-#Plot4: Min surface temperatures
+#Figure 2D: Min surface temperatures
 ymax<-max(surf$minT,na.rm=T) 
 ymin<-min(surf$minT,na.rm=T) 
 
