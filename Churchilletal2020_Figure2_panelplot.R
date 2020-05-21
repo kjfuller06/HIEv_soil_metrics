@@ -176,6 +176,6 @@ legend(legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt","Minimum Air Temp"),lty=c(1,
 corners = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 clip(corners[1],corners[2],ymin-5,ymax+1)
 abline(h=0,lty=2)
-abline(h=-5,lty=2)
+abline(h=5,lty=2)
 
 dev.off()
