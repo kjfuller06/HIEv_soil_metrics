@@ -70,7 +70,8 @@ soil<-na.omit(soil)
 
 #Summarize data
 soil<-aggregate(data=soil,value~SensorType+Sp+Date+Position+Treat+Shelter+Plot,FUN=mean,simplify=TRUE,drop=TRUE)
-CSM<-soil
+CSM<-soil[soil$SensorType=="TDR",]
+CSM$value<-CSM$value*100
 backup1<-soil
 soil<-aggregate(data=soil,value~SensorType+Sp+Date+Position+Treat,FUN=function(x) c(avg=mean(x),upper=mean(x)+sd(x)/sqrt(length(x)),lower=mean(x)-sd(x)/sqrt(length(x))),simplify=TRUE,drop=TRUE)
 
