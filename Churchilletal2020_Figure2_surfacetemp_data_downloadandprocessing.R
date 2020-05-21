@@ -102,3 +102,11 @@ max<-split(max,droplevels(max$Treatment))
 min<-subset(surf,select=c(-value,-maxT))
 min<-split(min,droplevels(min$Treatment))
 
+# identify dates of tempeture extremes_ not used for anything yet
+maxdate1<-min(airT$Date[airT$air.max>40])
+maxdate2<-max(airT$Date[airT$air.max>40])
+
+mindate1<-min(airT$Date[airT$Date<"2019-01-01" & airT$air.min<5])
+mindate2<-max(airT$Date[airT$Date<"2019-01-01" & airT$air.min<5])
+mindate3<-min(airT$Date[airT$Date>"2019-01-01" & airT$air.min<5])
+mindate4<-max(airT$Date[airT$Date>"2019-01-01" & airT$air.min<5])
