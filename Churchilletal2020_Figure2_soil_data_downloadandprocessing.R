@@ -84,6 +84,9 @@ soil$lower<-val$lower
 
 #separate data frame by data type and species
 RSM<-soil[soil$SensorType=="TDR",]
+RSM$value<-RSM$value*100
+RSM$upper<-RSM$upper*100
+RSM$lower<-RSM$lower*100
 for(i in levels(RSM$Sp)){
     x<-RSM[RSM$Sp==i,]
     x<-droplevels(x)
