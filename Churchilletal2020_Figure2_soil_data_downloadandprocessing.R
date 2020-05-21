@@ -1,11 +1,11 @@
-#******MAKE SURE LIBRARY IS IN THE C: DRIVE*******
-#****************set token below******************
-#load packages
+# #******MAKE SURE LIBRARY IS IN THE C: DRIVE*******
+# #****************set token below******************
+# #load packages
 library(devtools)
 library(data.table)
 install_bitbucket("remkoduursma/HIEv")
 library(HIEv)
-setToken("")
+# setToken("")
 library(reshape2)
 library(tidyverse)
 
