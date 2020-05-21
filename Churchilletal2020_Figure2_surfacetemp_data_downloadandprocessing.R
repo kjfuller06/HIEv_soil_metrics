@@ -1,3 +1,5 @@
+## surface temperatures still need to be summarised by week. Tried using the openAir package but had no success. Resources online suggest using ddply instead
+
 #start date
 sD<-as.Date("2018-06-01")
 #end date
