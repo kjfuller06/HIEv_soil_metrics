@@ -91,8 +91,8 @@ surf<-merge(surf2,as.data.frame(surf[[3]]),by=c("Date","Treatment"))
 
 #format for graphing
 max<-subset(surf,select=c(-value,-minT))
-max<-split(max,droplevels(max$Treatment))
+max<-split(max,droplevels(as.factor(max$Treatment)))
 
 min<-subset(surf,select=c(-value,-maxT))
-min<-split(min,droplevels(min$Treatment))
+min<-split(min,droplevels(as.factor(min$Treatment)))
 
