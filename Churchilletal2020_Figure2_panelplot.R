@@ -31,10 +31,10 @@ with(rFES[[4]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
 with(rFES[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.85),border=NA))
 with(rFES[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
 legend("topleft", y = NULL, 
-       legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
+       legend=c("aT-C","aT-D","eT-C","eT-D"), 
        col = c(adjustcolor("blue",alpha.f=0.65),adjustcolor("lightskyblue",alpha.f=0.85),adjustcolor("red",alpha.f=0.65),adjustcolor("red4",alpha.f=0.65)),lwd=c(5,5,5,5),cex=0.5, bty='n')
 legend("topleft", y = NULL, 
-       legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"),lty=c(1,3,1,3),lwd=1.5,cex=0.5,bty='n')
+       legend=c("aT-C","aT-D","eT-C","eT-D"),lty=c(1,3,1,3),lwd=1.5,cex=0.5,bty='n')
 #Irrigation plot
 par(new=TRUE)
 plot(Irrig1$Irrigation~Irrig1$Date,
@@ -82,16 +82,16 @@ with(CFES[[4]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
 with(CFES[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.85),border=NA))
 with(CFES[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
 legend("topleft", y = NULL,
-       legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"),
+       legend=c("aT-C","aT-D","eT-C","eT-D"),
        col = c(1,adjustcolor("lightskyblue",alpha.f=0.85),adjustcolor("red",alpha.f=0.65),adjustcolor("red4",alpha.f=0.65)),lty=c(3,1,1,1),lwd=c(1.5,5,5,5),cex=0.5,bty='n')
 legend("topleft", y = NULL,
-       legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"),
-       col = c(1,1,1,1),lty=c(3,3,1,3),lwd=1.5,cex=0.5,bty='n')
+       legend=c("aT-C","aT-D","eT-C","eT-D"),
+       col = c(1,1,1,1),lty=c(1,3,1,3),lwd=1.5,cex=0.5,bty='n')
 # arrows(x0 =as.Date("2018-06-01"),length=0.05, y0 = 0.03, y1 = 0.01)
 # text(x = as.Date("2018-06-01"), y = 0.035,labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
 corners = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 clip(corners[1],corners[2],-0.12,0.10)
-abline(h=0,lty=2)
+abline(h=0,lty=1)
 #Irrigation plot
 par(new=TRUE)
 plot(Irrig1$Irrigation~Irrig1$Date,
@@ -146,8 +146,7 @@ with(airT,points(maxT~Date,type="l"))
 corners = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 clip(corners[1],corners[2],ymin,ymax)
 abline(h=40,lty=2)
-abline(h=45,lty=2)
-legend(legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt","Maximum Air Temp"),lty=c(1,3,1,3,1),col=c("blue","lightskyblue","red","red4","black"),lwd=1.5,cex=0.5,box.lwd=0,box.col="white",bg="white",x=min(max[[1]]$Date)-14,y=ymax+1)
+legend(legend=c("aT-C","aT-D","eT-C","eT-D","Maximum Air Temp"),lty=c(1,3,1,3,1),col=c("blue","lightskyblue","red","red4","black"),lwd=1.5,cex=0.5,box.lwd=0,box.col="white",bg="white",x=min(max[[1]]$Date)-14,y=ymax+1)
 
 #Figure 2D: Min surface temperatures
 ymax<-max(surf$minT,na.rm=T) 
@@ -172,10 +171,9 @@ with(min[[4]],points(minT ~ Date, type = "l",col="red4",lty=2))
 # with(min[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.85),border=NA))
 with(min[[2]],points(minT ~ Date, type = "l",col="lightskyblue",lty=2))
 with(airT,points(minT~Date,type="l"))
-legend(legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt","Minimum Air Temp"),lty=c(1,3,1,3,1),col=c("blue","lightskyblue","red","red4","black"),lwd=1.5,cex=0.5,box.lwd=0,box.col="white",bg="white",x=min(max[[1]]$Date)-14,y=ymax)
+legend(legend=c("aT-C","aT-D","eT-C","eT-D","Minimum Air Temp"),lty=c(1,3,1,3,1),col=c("blue","lightskyblue","red","red4","black"),lwd=1.5,cex=0.5,box.lwd=0,box.col="white",bg="white",x=min(max[[1]]$Date)-14,y=ymax)
 corners = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 clip(corners[1],corners[2],ymin-5,ymax+1)
-abline(h=0,lty=2)
 abline(h=5,lty=2)
 
 dev.off()
