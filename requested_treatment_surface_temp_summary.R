@@ -42,8 +42,60 @@ with(df[[4]],points(maxT ~ Date, type = "l",col="red4",lty=2))
 # with(df[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.85),border=NA))
 with(df[[2]],points(maxT ~ Date, type = "l",col="lightskyblue",lty=2))
 
-# write multipanel tiff to disk
-tiff(file = "outputs/ribboning3.tiff", width =2200, height = 1100, units = "px", res = 200)
+# # write multipanel tiff to disk
+# tiff(file = "outputs/ribboning3.tiff", width =2200, height = 1100, units = "px", res = 200)
+# 
+# # legend
+# plot(1, type="n", xaxt = 'n', yaxt = 'n', bty = 'n', xlim=c(0, 0.01), ylim=c(0, 0.01), ann = FALSE)
 
-# legend
-plot(1, type="n", xaxt = 'n', yaxt = 'n', bty = 'n', xlim=c(0, 0.01), ylim=c(0, 0.01), ann = FALSE)
+stats = read.csv("Daily_Temp_Summary_Stats 2018-06-01 - 2019-05-30 .csv")
+
+##subset each treatment to a different data set
+df1<-subset(allsum, Treatment == "AmbCon")
+df2<-subset(allsum, Treatment == "AmbDrt")
+df3<-subset(allsum, Treatment == "EleCon")
+df4<-subset(allsum, Treatment == "EleDrt")
+
+quantile(df1$uppermax, probs = seq(0, 1, 0.05))
+
+df1 = df1[,c(1,2,3,9,10)]
+df1.47 = df1
+df1.47[df1.47$uppermax <= 47, c(3:5)] = NA
+df2 = df2[,c(1,2,3,9,10)]
+df2.47 = df2
+df2.47[df2.47$uppermax <= 47, c(3:5)] = NA
+df3 = df3[,c(1,2,3,9,10)]
+df3.47 = df3
+df3.47[df3.47$uppermax <= 47, c(3:5)] = NA
+df4 = df4[,c(1,2,3,9,10)]
+df4.47 = df4
+df4.47[df4.47$uppermax <= 47, c(3:5)] = NA
+
+with(df1.47, plot(uppermax ~ Date,
+                  type = "l",
+                  ylim = c(0, 60),
+                  xlim = c(min(df1$Date),
+                           max(df1$Date))))
+with(df2.47, points(uppermax ~ Date,
+                    type = "l"))
+with(df3.47, points(uppermax ~ Date,
+                    type = "l"))
+with(df4.47, points(uppermax ~ Date,
+                    type = "l"))
+
+library(tidyverse)
+
+heatwaves = df1.47[,c(2,3,5)] %>% 
+  full_join(df2.47[,c(2,3,5)], by = c("Date")) %>% 
+  full_join(df3.47[,c(2,3,5)], by = c("Date")) %>% 
+  full_join(df4.47[,c(2,3,5)], by = c("Date"))
+names(heatwaves)[c(2:9)] = c("mean.ambcon",
+                             "uppermax.ambcon",
+                             "mean.ambdrt",
+                             "uppermax.ambdrt",
+                             "mean.elecon",
+                             "uppermax.elecon",
+                             "mean.eledrt",
+                             "uppermax.eledrt")
+
+write.csv(heatwaves, "requested_heatwaves_for_Churchilletal2020.csv")
