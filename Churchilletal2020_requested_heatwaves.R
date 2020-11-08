@@ -60,16 +60,14 @@ s6$Shelter<-6
 x<-"AirT"
 #create new dfs based on variable
 all<-rbind(s2[grep(x, s2$variable),])
-all<-rbind(s4[grep(x, s5$variable),],all)
+all<-rbind(s4[grep(x, s4$variable),],all)
 all<-rbind(s6[grep(x, s6$variable),],all)
 
 #put df in order by date
 all$DateTime<-as.POSIXct(all$DateTime,format="%Y/%m/%d %h/%m/%s")
 all<-all[do.call(order,all),]
 all$Date<-date(all$DateTime)
-
 all<-na.omit(all)
-all<-all[all$Date!="2019-03-31",]
 
 # select max values for each date
 AirOUT<-subset(all, variable == "AirTOUT")
