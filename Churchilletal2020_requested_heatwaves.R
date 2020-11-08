@@ -22,72 +22,75 @@ eD<-as.Date("2019-05-31")
 
 #download from HIEv and processing
 #get data, only keep variables of interest
+s1 <- (downloadTOA5("PACE_AUTO_S1_ABVGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,6,12:15)]
 s2 <- (downloadTOA5("PACE_AUTO_S2_ABVGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,6,12:15)]
+s3 <- (downloadTOA5("PACE_AUTO_S3_ABVGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,6,12:15)]
 s4 <- (downloadTOA5("PACE_AUTO_S4_ABVGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,6,12:15)]
+s5 <- (downloadTOA5("PACE_AUTO_S5_ABVGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,6,12:15)]
 s6 <- (downloadTOA5("PACE_AUTO_S6_ABVGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,6,12:15)]
 
-#Rename columns
-names(s2)<-c("DateTime",
-             "AirTOUT",
-             "SurfaceTemp3EleDrt",
-             "SurfaceTemp4AmbDrt",
-             "SurfaceTemp5AmbCon",
-             "SurfaceTemp6EleCon")
-
-names(s4)<-c("DateTime",
-             "AirTOUT",
-             "SurfaceTemp3EleCon",
-             "SurfaceTemp4AmbDrt",
-             "SurfaceTemp5AmbCon",
-             "SurfaceTemp6EleDrt")
-
-names(s6)<-c("DateTime",
-             "AirTOUT",
-             "SurfaceTemp3EleDrt",
-             "SurfaceTemp4AmbCon",
-             "SurfaceTemp5EleCon",
-             "SurfaceTemp6AmbDrt")
-
 #convert to long form, add "shelter" variable
+s1<-melt(s1,id.vars="DateTime")
+s1$Shelter<-1
 s2<-melt(s2,id.vars="DateTime")
 s2$Shelter<-2
+s3<-melt(s3,id.vars="DateTime")
+s3$Shelter<-3
 s4<-melt(s4,id.vars="DateTime")
 s4$Shelter<-4
+s5<-melt(s5,id.vars="DateTime")
+s5$Shelter<-5
 s6<-melt(s6,id.vars="DateTime")
 s6$Shelter<-6
+
+#Rename columns
+abv<-rbind(s1,s2,s3,s4,s5,s6)
+names(abv)<-c("DateTime","SensorCode","value","Shelter")
+sensors<-read.csv("abovegroundsensors.csv") %>% 
+        filter(SensorType != "Humidity" & SensorType != "PAR")
+abv<-merge(abv,sensors,by=c("Shelter","SensorCode"))
 
 #Air Temperature
 x<-"AirT"
 #create new dfs based on variable
-all<-rbind(s2[grep(x, s2$variable),])
-all<-rbind(s4[grep(x, s4$variable),],all)
-all<-rbind(s6[grep(x, s6$variable),],all)
+airtemp<-abv[grep(x, abv$SensorType),]
 
 #put df in order by date
-all$DateTime<-as.POSIXct(all$DateTime,format="%Y/%m/%d %h/%m/%s")
-all<-all[do.call(order,all),]
-all$Date<-date(all$DateTime)
-all<-na.omit(all)
+airtemp$DateTime<-as.POSIXct(airtemp$DateTime,format="%Y/%m/%d %h/%m/%s")
+airtemp<-airtemp[do.call(order,airtemp),]
+airtemp$Date<-date(airtemp$DateTime)
+airtemp = airtemp %>% 
+        dplyr::select(Shelter, value, Position, Date)
+airtemp<-na.omit(airtemp)
 
 # select max values for each date
-maxes = aggregate(data = all, value ~ Date, FUN = function(x) c(avg = mean(x), maxT = max(x)), simplify = TRUE, drop = TRUE)
+maxes = aggregate(data = airtemp, value ~ Date, FUN = function(x) c(avg = mean(x), maxT = max(x)), simplify = TRUE, drop = TRUE)
+val<-data.frame(maxes[["value"]])
+maxes$maxT = val$maxT
 
 # create day and month numbers for max data
 maxes$Month = as.numeric(substr(maxes$Date, 6, 7))
 maxes$Day = as.numeric(substr(maxes$Date, 9, 10))
-#### only 363 days represented in the dataset; 2019-03-31 was removed above and one other is missing for some reason
 
-# bind historical temperature data to maxes df
+# 2a) ####
 maxes = maxes %>% 
-        left_join(histtemp)
+        left_join(histtemp) %>% 
+        dplyr::select(Date, maxT, Month, Day, Maximum.temperature..Degree.C.)
+names(maxes) = c("date", "maxT", "month", "day", "hist.maxT")
+
+# 2b) ####
+maxes = maxes %>% 
+        filter((maxT < hist.maxT) == FALSE)
 
 #Surface Temperatures####
 x<-"SurfaceTemp"
 #create new dfs based on variable
-df1<-rbind(s1[grep(x, s1$variable),])
-df2<-rbind(s2[grep(x, s2$variable),],df1)
-df5<-rbind(s5[grep(x, s5$variable),],df2)
-df6<-rbind(s6[grep(x, s6$variable),],df5)
+surf<-rbind(s1[grep(x, s1$variable),])
+surf<-rbind(s2[grep(x, s2$variable),],surf)
+surf<-rbind(s3[grep(x, s3$variable),],surf)
+surf<-rbind(s4[grep(x, s4$variable),],surf)
+surf<-rbind(s5[grep(x, s5$variable),],surf)
+surf<-rbind(s6[grep(x, s6$variable),],surf)
 
 #Separate treatments and other variables into separate columns
 df6<-separate(data=df6, col=variable, c("Sensor Type","Plot","Treatment"), sep = c(11,12), remove = TRUE)
