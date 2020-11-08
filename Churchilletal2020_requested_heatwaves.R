@@ -5,7 +5,8 @@
 #       2b) subset by PACE temperatures that are at or above the 90% historical value
 # 3) load PACE surface temperature data
 #       3a) subset surface temperatures by selected dates from the above
-#       3b) export surface data
+#       3b) merge all relevant data and export
+# 4) for heatwave DURATION, I'll need to do something additional. I may want to create a mock heatwave threshold by estimating the difference in temperature between airT and ambcon surfaceT. Use this relationship to calculate what the estimated airT would be using the surface temperature from difference treatments.
 
 # 1) ####
 histtemp = read.csv("RAAF_daily_temp.csv") %>% 
@@ -82,73 +83,45 @@ names(maxes) = c("date", "maxT", "month", "day", "hist.maxT")
 maxes = maxes %>% 
         filter((maxT < hist.maxT) == FALSE)
 
-#Surface Temperatures####
+# 3) ####
 x<-"SurfaceTemp"
 #create new dfs based on variable
-surf<-rbind(s1[grep(x, s1$variable),])
-surf<-rbind(s2[grep(x, s2$variable),],surf)
-surf<-rbind(s3[grep(x, s3$variable),],surf)
-surf<-rbind(s4[grep(x, s4$variable),],surf)
-surf<-rbind(s5[grep(x, s5$variable),],surf)
-surf<-rbind(s6[grep(x, s6$variable),],surf)
-
-#Separate treatments and other variables into separate columns
-df6<-separate(data=df6, col=variable, c("Sensor Type","Plot","Treatment"), sep = c(11,12), remove = TRUE)
+surf<-abv[grep(x, abv$SensorType),]
 
 #put df in order by date
-df6$DateTime<-as.POSIXct(df6$DateTime,format="%Y/%m/%d %h/%m/%s")
-df6<-df6[do.call(order,df6),]
-#df6$Date<-date(df6$DateTime)
+surf$DateTime<-as.POSIXct(surf$DateTime,format="%Y/%m/%d %h/%m/%s")
+surf<-surf[do.call(order,surf),]
+surf$Date<-date(surf$DateTime)
+surf = surf %>% 
+        dplyr::select(Shelter, value, Plot, Treatment, Date)
+surf<-na.omit(surf)
 
-##average and standard error by treatment
-allsum = data.table(df6)
-allsum<-na.omit(allsum)
-allsum$Date<-as.Date(allsum$DateTime)
-allsum = allsum[,list(value = mean(value)), 'Plot,Shelter,Treatment,Date']
-allsum = allsum[,list(avg_value = mean(value), ste_value = sd(value)/sqrt(length(value))), 'Treatment,Date']
-allsum$upper<-allsum$avg_value+allsum$ste_value
-allsum$lower<-allsum$avg_value-allsum$ste_value
+# select max values for each date
+surf_agg = aggregate(data = surf, value ~ Date + Treatment, FUN = function(x) c(avg = mean(x), maxT = max(x)), simplify = TRUE, drop = TRUE)
+val<-data.frame(surf_agg[["value"]])
+surf_agg$maxT = val$maxT
+surf_agg$avgT = val$avg
+surf_agg = surf_agg %>% 
+        dplyr::select(Date, Treatment, maxT, avgT)
 
-#rename columns
-names(allsum)<-c("Treatment","Date","value","stderror","upper","lower")
-allsum$Treatment<-factor(allsum$Treatment,levels=c("AmbCon","AmbDrt","EleCon","EleDrt"))
-allsum<-allsum[order(Date,Treatment),] 
+# create day and month numbers for max data
+surf_agg$Month = as.numeric(substr(surf_agg$Date, 6, 7))
+surf_agg$Day = as.numeric(substr(surf_agg$Date, 9, 10))
 
-Smax=max(allsum$value,na.rm=T) #use same temperature range across temperature charts
-Smin<-min(allsum$value,na.rm=T) #there is an NA value in a soil temp sensor data stream that is stopping the script
+# 3a) ####
+surf_agg = surf_agg[surf_agg$Date %in% maxes$date,]
 
-##subset each treatment to a different data set
-df1<-subset(allsum, Treatment == "AmbCon")
-df2<-subset(allsum, Treatment == "AmbDrt")
-df3<-subset(allsum, Treatment == "EleCon")
-df4<-subset(allsum, Treatment == "EleDrt")
+# 3b) ####
+# remove unwanted variables and rename columns for clarity
+surf_agg = surf_agg %>% 
+        dplyr::select(-Month,
+                      -Day)
+names(surf_agg) = c("date", "treatment", "PACE_max_surface_temp", "PACE_avg_surface_temp")
+write.csv(surf_agg, "Churchilletal2020_surfacetemp_heatwaves.csv", row.names = FALSE)
 
-##start a tiff file
-tiff(file = paste("FIELD",x,sD,"-",eD, ".tiff"), width = 3200, height = 2100, units = "px", res = 400) 
-#plot Surface Temp
-plot(df1$value ~ df1$Date, 
-     type = "l",
-     xlim=c(min(df1$Date),max(df1$Date)),
-     ylim = c(Smin-1,Smax+2),
-     ylab=expression(paste("Temperature (",degree~C,")")),
-     xlab="Date",main="Plot Surface Temperature by Treatment",
-     col=4)
-#polygon(c(df1$Date,rev(df1$Date)),c(df1$lower,rev(df1$upper)),col=adjustcolor("blue",alpha.f=0.5),border=NA)
-points(df2$value ~ df2$Date, type = "l",col=4,lty=2)
-#polygon(c(df2$Date,rev(df2$Date)),c(df2$lower,rev(df2$upper)),col=adjustcolor("blue",alpha.f=0.25),density=25)
-points(df3$value ~ df2$Date, type = "l",col=2)
-#polygon(c(df3$Date,rev(df3$Date)),c(df3$lower,rev(df3$upper)),col=adjustcolor("red",alpha.f=0.5),border=NA)
-points(df4$value ~ df2$Date, type = "l",col=2,lty=2)
-#polygon(c(df4$Date,rev(df4$Date)),c(df4$lower,rev(df4$upper)),col=adjustcolor("red",alpha.f=0.25),density=25)
-legend("topleft", y = NULL, 
-       legend=c("aT-Con","aT-Drt","eT-Con","eT-Drt"), 
-       col = c(4,4,2,2),lty=c(1,2,1,2),lwd=2,cex=0.8)
-arrows(x0 =as.Date("2018-06-01"),length=0.05, y0 = (Smin+0.5), y1 = (Smin-2))
-text(x = as.Date("2018-06-01"), y = (Smin+1), 
-     labels=expression(paste("Drought Treatment Initiated")),cex=0.6)
-arrows(x0 =as.Date("2018-12-01"),length=0.05, y0 = (Smin+0.5), y1 = (Smin-2))
-text(x = as.Date("2018-12-01"), y = (Smin+1), 
-     labels=expression(paste("Drought Treatment Completed")),cex=0.6)
-
-dev.off()
-
+# remove unwanted variables and rename columns for clarity
+maxes = maxes %>% 
+        dplyr::select(-month,
+                      -day)
+names(maxes) = c("date", "PACE_max_air_temp", "RAAF_historical_max_air_temp")
+write.csv(maxes, "Churchilletal2020_airtemp_heatwaves.csv", row.names = FALSE)
