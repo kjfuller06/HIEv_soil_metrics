@@ -18,7 +18,7 @@ histtemp = aggregate(data = histtemp, Maximum.temperature..Degree.C. ~ Month + D
 #write start date for first analysis
 sD<-as.Date("2018-06-01")
 #Write end date for first analysis
-eD<-as.Date("2019-05-30")
+eD<-as.Date("2019-05-31")
 
 #download from HIEv and processing
 #get data, only keep variables of interest
@@ -70,8 +70,7 @@ all$Date<-date(all$DateTime)
 all<-na.omit(all)
 
 # select max values for each date
-AirOUT<-subset(all, variable == "AirTOUT")
-maxes = aggregate(data = AirOUT, value ~ Date, FUN = function(x) c(avg = mean(x), maxT = max(x)), simplify = TRUE, drop = TRUE)
+maxes = aggregate(data = all, value ~ Date, FUN = function(x) c(avg = mean(x), maxT = max(x)), simplify = TRUE, drop = TRUE)
 
 # create day and month numbers for max data
 maxes$Month = as.numeric(substr(maxes$Date, 6, 7))
