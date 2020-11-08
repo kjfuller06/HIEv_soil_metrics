@@ -1,28 +1,32 @@
-library(raster)
+## This script is for generating heatwave data using historical temperature data, air temperature data from PACE and surface temperature from PACE
+# 1) load historical temperature data and generate 90% mark for each day of the year
+# 2) load PACE data and generate daily maximum metrics
+#       2a) bind historical 90% mark to PACE data
+#       2b) subset by PACE temperatures that are at or above the 90% historical value
+# 3) load PACE surface temperature data
+#       3a) subset surface temperatures by selected dates from the above
+#       3b) export surface data
 
-#Basic####
+# 1) ####
+histtemp = read.csv("RAAF_daily_temp.csv") %>% 
+        dplyr::select(-Product.code,
+                      -Bureau.of.Meteorology.station.number) %>% 
+        filter(is.na(Maximum.temperature..Degree.C.) == FALSE & Quality == "Y")
+histtemp = aggregate(data = histtemp, Maximum.temperature..Degree.C. ~ Month + Day, FUN = function(x) c(percent90 = quantile(x, probs = 0.9)), simplify = TRUE, drop = TRUE)
+
+# 2) ####
 #write start date for first analysis
 sD<-as.Date("2018-06-01")
 #Write end date for first analysis
 eD<-as.Date("2019-05-30")
 
-#download from HIEv and processing####
+#download from HIEv and processing
 #get data, only keep variables of interest
-s1 <- (downloadTOA5("PACE_AUTO_S1_ABVGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,6,12:15)]
 s2 <- (downloadTOA5("PACE_AUTO_S2_ABVGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,6,12:15)]
-s3 <- (downloadTOA5("PACE_AUTO_S3_ABVGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,6,12:15)]
 s4 <- (downloadTOA5("PACE_AUTO_S4_ABVGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,6,12:15)]
-s5 <- (downloadTOA5("PACE_AUTO_S5_ABVGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,6,12:15)]
 s6 <- (downloadTOA5("PACE_AUTO_S6_ABVGRND_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,6,12:15)]
 
 #Rename columns
-names(s1)<-c("DateTime",
-             "AirTIN",
-             "SurfaceTemp3AmbDrt",
-             "SurfaceTemp4EleCon",
-             "SurfaceTemp5EleDrt",
-             "SurfaceTemp6AmbCon")
-
 names(s2)<-c("DateTime",
              "AirTOUT",
              "SurfaceTemp3EleDrt",
@@ -30,26 +34,12 @@ names(s2)<-c("DateTime",
              "SurfaceTemp5AmbCon",
              "SurfaceTemp6EleCon")
 
-names(s3)<-c("DateTime",
-             "AirTIN",
-             "SurfaceTemp3AmbCon",
-             "SurfaceTemp4EleCon",
-             "SurfaceTemp5EleDrt",
-             "SurfaceTemp6AmbDrt")
-
 names(s4)<-c("DateTime",
              "AirTOUT",
              "SurfaceTemp3EleCon",
              "SurfaceTemp4AmbDrt",
              "SurfaceTemp5AmbCon",
              "SurfaceTemp6EleDrt")
-
-names(s5)<-c("DateTime",
-             "AirTIN",
-             "SurfaceTemp3EleCon",
-             "SurfaceTemp4AmbDrt",
-             "SurfaceTemp6EleDrt",
-             "SurfaceTemp5AmbCon")
 
 names(s6)<-c("DateTime",
              "AirTOUT",
@@ -59,50 +49,36 @@ names(s6)<-c("DateTime",
              "SurfaceTemp6AmbDrt")
 
 #convert to long form, add "shelter" variable
-s1<-melt(s1,id.vars="DateTime")
-s1$Shelter<-1
 s2<-melt(s2,id.vars="DateTime")
 s2$Shelter<-2
-s3<-melt(s3,id.vars="DateTime")
-s3$Shelter<-3
 s4<-melt(s4,id.vars="DateTime")
 s4$Shelter<-4
-s5<-melt(s5,id.vars="DateTime")
-s5$Shelter<-5
 s6<-melt(s6,id.vars="DateTime")
 s6$Shelter<-6
 
-#Air Temperature####
+#Air Temperature
 x<-"AirT"
 #create new dfs based on variable
-df1<-rbind(s1[grep(x, s1$variable),])
-df2<-rbind(s2[grep(x, s2$variable),],df1)
-df5<-rbind(s5[grep(x, s5$variable),],df2)
-df6<-rbind(s6[grep(x, s6$variable),],df5)
+all<-rbind(s2[grep(x, s2$variable),])
+all<-rbind(s4[grep(x, s5$variable),],all)
+all<-rbind(s6[grep(x, s6$variable),],all)
 
 #put df in order by date
-df6$DateTime<-as.POSIXct(df6$DateTime,format="%Y/%m/%d %h/%m/%s")
-df6<-df6[do.call(order,df6),]
-df6$Date<-date(df6$DateTime)
+all$DateTime<-as.POSIXct(all$DateTime,format="%Y/%m/%d %h/%m/%s")
+all<-all[do.call(order,all),]
+all$Date<-date(all$DateTime)
 
-df6<-na.omit(df6)
-df6<-df6[df6$Date!="2019-03-31",]
+all<-na.omit(all)
+all<-all[all$Date!="2019-03-31",]
 
 # select max values for each date
-AirOUT<-subset(df6, variable == "AirTOUT")
+AirOUT<-subset(all, variable == "AirTOUT")
 maxes = aggregate(data = AirOUT, value ~ Date, FUN = function(x) c(avg = mean(x), maxT = max(x)), simplify = TRUE, drop = TRUE)
 
 # create day and month numbers for max data
 maxes$Month = as.numeric(substr(maxes$Date, 6, 7))
 maxes$Day = as.numeric(substr(maxes$Date, 9, 10))
 #### only 363 days represented in the dataset; 2019-03-31 was removed above and one other is missing for some reason
-
-# load daily temp data
-histtemp = read.csv("RAAF_daily_temp.csv") %>% 
-        dplyr::select(-Product.code,
-                      -Bureau.of.Meteorology.station.number) %>% 
-        filter(is.na(Maximum.temperature..Degree.C.) == FALSE & Quality == "Y")
-histtemp = aggregate(data = histtemp, Maximum.temperature..Degree.C. ~ Month + Day, FUN = function(x) c(percent90 = quantile(x, probs = 0.9)), simplify = TRUE, drop = TRUE)
 
 # bind historical temperature data to maxes df
 maxes = maxes %>% 
