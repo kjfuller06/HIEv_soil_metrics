@@ -125,3 +125,5 @@ maxes = maxes %>%
                       -day)
 names(maxes) = c("date", "PACE_max_air_temp", "RAAF_historical_max_air_temp")
 write.csv(maxes, "Churchilletal2020_airtemp_heatwaves.csv", row.names = FALSE)
+
+# next, subtract historical 90% from all other temperature data and plot air and surface temps by treatment
