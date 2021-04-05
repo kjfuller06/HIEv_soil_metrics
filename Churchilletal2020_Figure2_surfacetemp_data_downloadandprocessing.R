@@ -1,7 +1,7 @@
 #start date
-sD<-as.Date("2018-06-01")
+sD<-as.Date("2019-05-01")
 #end date
-eD<-as.Date("2019-05-30")
+eD<-as.Date("2019-11-30")
 
 #Irrigation####
 # Irrig<- (downloadTOA5("PACE_AUTO_ALL_IRRIG_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,4:6)]

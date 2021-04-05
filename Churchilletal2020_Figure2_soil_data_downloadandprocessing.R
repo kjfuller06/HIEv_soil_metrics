@@ -1,18 +1,7 @@
-# #******MAKE SURE LIBRARY IS IN THE C: DRIVE*******
-# #****************set token below******************
-# #load packages
-library(devtools)
-library(data.table)
-install_bitbucket("remkoduursma/HIEv")
-library(HIEv)
-# setToken("")
-library(reshape2)
-library(tidyverse)
-
 #start date
-sD<-as.Date("2018-06-01")
-#end date
-eD<-as.Date("2019-05-30")
+sD<-as.Date("2019-05-01")
+#end date
+eD<-as.Date("2019-11-30")
 
 #Irrigation####
 Irrig<- (downloadTOA5("PACE_AUTO_ALL_IRRIG_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,4:6)]
@@ -29,7 +18,7 @@ levels(Irrig$Treatment)<-c("Con","Drt","Con","Drt")
 
 #subset data by treatment
 Irrig1<-subset(Irrig, Treatment == "Con")
-Irrig2<-subset(Irrig[Irrig$Date>"2018-05-31"&Irrig$Date<"2018-12-01",], Treatment == "Drt")
+Irrig2<-subset(Irrig[Irrig$Date>"2019-05-31"&Irrig$Date<"2019-12-01",], Treatment == "Drt")
 
 #Soil Moisture####
 #download data from HIEv and only keep soil moisture variables of interest

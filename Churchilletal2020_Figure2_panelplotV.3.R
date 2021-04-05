@@ -14,7 +14,7 @@ par(fig=c(0.1,0.99,0.76875,1),new=TRUE)
 with(rFES[[1]],plot(value ~ Date, 
                     type = "l",
                     bty='l',
-                    ylim = c(ymin-5,ymax),
+                    ylim = c(ymin-5,ymax+5),
                     ylab="",
                     xlab="",
                     col=1,
@@ -52,8 +52,8 @@ plot(Irrig2$Irrigation~Irrig2$Date,
      xlim=c(min(Irrig1$Date),max(Irrig1$Date)))
 corners2 = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 par(xpd = TRUE) #Draw outside plot area
-text(x = corners2[2]+corners2[2]/850, y = mean(corners2[3:4])-mean(corners2[3:4])/1.15, "Irrigation\n(mm)",srt=270,cex=0.6)
-text(x = corners2[2]+corners2[2]/1800, y = mean(corners2[3:4])-mean(corners2[3:4])/1.165, "20\n\n10\n\n0",las=0,cex=0.55)
+text(x = corners2[2]+corners2[2]/1250, y = mean(corners2[3:4])-mean(corners2[3:4])/1.15, "Irrigation\n(mm)",srt=270,cex=0.6)
+text(x = corners2[2]+corners2[2]/3000, y = mean(corners2[3:4])-mean(corners2[3:4])/1.165, "20\n10\n0",las=0,cex=0.55)
 axis(side=4,at=c(0,10,20),las=2,labels=c("","",""))
 
 
@@ -104,8 +104,8 @@ plot(Irrig2$Irrigation~Irrig2$Date,
      xlim=c(min(Irrig1$Date),max(Irrig1$Date)))
 corners2 = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 par(xpd = TRUE) #Draw outside plot area
-text(x = corners2[2]+corners2[2]/850, y = mean(corners2[3:4])-mean(corners2[3:4])/1.15, "Irrigation\n(mm)",srt=270,cex=0.6)
-text(x = corners2[2]+corners2[2]/1800, y = mean(corners2[3:4])-mean(corners2[3:4])/1.165, "20\n\n10\n\n0",las=0,cex=0.55)
+text(x = corners2[2]+corners2[2]/1250, y = mean(corners2[3:4])-mean(corners2[3:4])/1.15, "Irrigation\n(mm)",srt=270,cex=0.6)
+text(x = corners2[2]+corners2[2]/3000, y = mean(corners2[3:4])-mean(corners2[3:4])/1.165, "20\n10\n0",las=0,cex=0.55)
 axis(side=4,at=c(0,10,20),las=2,labels=c("","",""))
 
 ## Figure 2C: Max surface temperatures
@@ -137,7 +137,7 @@ with(airT,points(maxT~Date,type="l"))
 corners = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 clip(corners[1],corners[2],ymin,ymax)
 abline(h=40,lty=2)
-legend(legend=c("Maximum Air Temp"),lty=c(1),col=c("black"),lwd=1.5,cex=0.5,box.lwd=0,box.col="white",bg="white",x=min(max[[1]]$Date)-14,y=ymax+1)
+legend(legend=c("Maximum Air Temp"),lty=c(1),col=c("black"),lwd=1.5,cex=0.5,box.lwd=0,box.col="white",bg="white",x=min(max[[1]]$Date)-7,y=ymax+1)
 
 #Figure 2D: Min surface temperatures
 ymax<-max(surf$minT,na.rm=T) 
@@ -162,7 +162,7 @@ with(min[[4]],points(minT ~ Date, type = "l",col="red4",lty=2))
 # with(min[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.85),border=NA))
 with(min[[2]],points(minT ~ Date, type = "l",col="lightskyblue",lty=2))
 with(airT,points(minT~Date,type="l"))
-legend(legend=c("Minimum Air Temp"),lty=c(1),col=c("black"),lwd=1.5,cex=0.5,box.lwd=0,box.col="white",bg="white",x=min(max[[1]]$Date)-14,y=ymax)
+legend(legend=c("Minimum Air Temp"),lty=c(1),col=c("black"),lwd=1.5,cex=0.5,box.lwd=0,box.col="white",bg="white",x=min(max[[1]]$Date)-7,y=ymax)
 corners = par("usr") #Gets the four corners of plot area (x1, x2, y1, y2)
 clip(corners[1],corners[2],ymin-5,ymax+1)
 abline(h=0,lty=2)
