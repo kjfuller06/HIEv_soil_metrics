@@ -68,3 +68,14 @@ ggplot(data=airT, aes(x=month, y=value, group = name)) +
   theme_classic() +
   theme(legend.position = "none") 
 dev.off()
+
+# violin test
+backup$month = factor(backup$month, levels = c("Jun", "Jul", "Aug", "Sep", "Oct", "Nov"))
+backup = backup[order(backup$month),]
+tiff(file = "Figure1b_AirT_violin.tiff", width =1100, height = 700, units = "px", res = 200)
+ggplot(backup, aes(x = month, y = value)) +
+  geom_violin() +
+  geom_boxplot(width = 0.1) +
+  labs(x="Month", y = expression(paste("Mean Air Temperature (",degree~C,")"))) +
+  theme_classic()
+dev.off()
