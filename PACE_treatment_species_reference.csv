@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 Subplot ID,Temp,Rain,Species
 S1P1A,aT,Drt,Rye
 S1P1B,aT,Drt,Wal
@@ -192,7 +191,7 @@ S6P8A,aT,Con,DigBis
 S6P8B,aT,Con,Dig
 S6P8C,aT,Con,Bis
 S6P8D,aT,Con,Rho
-=======
+=======,,,
 Subplot ID,Temp,Rain,Species
 S1P1A,aT,Drt,Rye
 S1P1B,aT,Drt,Wal
@@ -386,4 +385,4 @@ S6P8A,aT,Con,DigBis
 S6P8B,aT,Con,Dig
 S6P8C,aT,Con,Bis
 S6P8D,aT,Con,Rho
->>>>>>> 319aaf1763ca767e820298cb0eaf6c504234ddcd
+>>>>>>> 319aaf1763ca767e820298cb0eaf6c504234ddcd,,,

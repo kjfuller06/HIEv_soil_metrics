@@ -1,3 +1,16 @@
+Baug = as.POSIXct("2019-08-20 08:00:00")
+Boct = as.POSIXct("2019-09-30 08:00:00")
+Faug_13 = as.POSIXct("2019-08-20 08:00:00")
+Faug_46 = as.POSIXct("2019-08-21 08:00:00")
+Foct = as.POSIXct("2019-10-08 08:00:00")
+Fnov = as.POSIXct("2019-11-18 08:00:00")
+Laug = as.POSIXct("2019-08-16 08:00:00")
+Loct = as.POSIXct("2019-10-02 08:00:00")
+Lnov = as.POSIXct("2019-11-15 08:00:00")
+Raug = as.POSIXct("2019-08-13 08:00:00")
+Roct_14 = as.POSIXct("2019-09-30 08:00:00")
+Roct_56 = as.POSIXct("2019-10-02 08:00:00")
+
 #start date
 sD<-as.Date("2019-06-01")
 #end date
@@ -33,24 +46,58 @@ abv<-merge(abv,sensors,by=c("Shelter","SensorCode"))
 #change class of variables
 abv$Plot<-as.factor(abv$Plot)
 abv$Shelter<-as.factor(abv$Shelter)
-abv$Date<-as.Date(abv$DateTime)
 
 #air temp data for plotting
 airT<-abv[abv$SensorType=="AirT",]
-airT<-subset(airT,select=-c(Treatment,Plot,SensorType,SensorCode))
-airT<-na.omit(airT)
 airT<-airT[airT$Position=="In",]
-airT$month = format(airT$Date, format = "%b")
-airT$month = as.factor(airT$month)
-airT$month = factor(airT$month, levels = c("Jun", "Jul", "Aug", "Sep", "Oct", "Nov"))
+airT = airT %>% 
+  dplyr::select(-Plot,
+                -Treatment)
+
+# assign harvest month of interest for summary stats
+airT$month = NA
+airT$species = NA
+# Bis
+bis = airT
+bis$species = "Bis"
+bis$month[bis$DateTime <= Baug] = "Aug"
+bis$month[bis$DateTime > Baug & bis$DateTime <= Boct] = "Oct"
+bis = na.omit(bis)
+
+# Fes
+fes = airT
+fes$species = "Fes"
+fes$month[fes$Shelter %in% c("1", "2", "3") & fes$DateTime <= Faug_13] = "Aug"
+fes$month[fes$Shelter %in% c("4", "5", "6") & fes$DateTime <= Faug_46] = "Aug"
+fes$month[fes$Shelter %in% c("1", "2", "3") & fes$DateTime > Faug_13 & fes$DateTime <= Foct] = "Oct"
+fes$month[fes$Shelter %in% c("4", "5", "6") & fes$DateTime > Faug_46 & fes$DateTime <= Foct] = "Oct"
+fes$month[fes$DateTime > Foct & fes$DateTime <= Fnov] = "Nov"
+fes = na.omit(fes)
+
+# Luc
+luc = airT
+luc$species = "Luc"
+luc$month[luc$DateTime <= Laug] = "Aug"
+luc$month[luc$DateTime > Laug & luc$DateTime <= Loct] = "Oct"
+luc$month[luc$DateTime > Loct & luc$DateTime <= Lnov] = "Nov"
+luc = na.omit(luc)
+
+# Rye
+rye = airT
+rye$species = "Rye"
+rye$month[rye$DateTime <= Raug] = "Aug"
+rye$month[rye$Shelter %in% c("1", "2", "3", "4") & rye$DateTime > Raug & rye$DateTime <= Roct_14] = "Oct"
+rye$month[rye$Shelter %in% c("5", "6") & rye$DateTime > Raug & rye$DateTime <= Roct_56] = "Oct"
+rye = na.omit(rye)
+
+# combine
+airT = rbind(bis, fes, luc, rye)
 airT = airT[order(airT$month),]
-airT<-aggregate(data=airT,value~month,FUN=function(x) c(avg=mean(x),maxT=max(x),minT=min(x)),simplify=TRUE,drop=TRUE)
+airT<-aggregate(data=airT,value~month,FUN=function(x) c(avg=mean(x),stder=sd(x)/sqrt(length(x))),simplify=TRUE,drop=TRUE)
 val<-data.frame(airT[["value"]])
 airT$value<-val$avg
-airT$maxT<-val$maxT
-airT$minT<-val$minT
-
-ymax = max(airT$maxT)
+airT$stder<-val$stder
+airT = airT[order(airT$month),]
 
 # plot
 with(airT, barplot(value ~ month,
@@ -60,9 +107,17 @@ with(airT, barplot(value ~ month,
                    col = "black"))
 
 tiff(file = paste("Figure1b_AirT_",sD,"_",eD,".tiff",sep=""), width =1100, height = 900, units = "px", res = 200)
+# ggplot(data=airT, aes(x=month, y=value)) +
+#   geom_bar(stat="identity", width=0.4, fill="black") +
+#   theme_classic() +
+#   labs(x="Month", y = expression(paste("Mean Air Temperature (",degree~C,")"))) +
+#   ylim(0, 25)
+
 ggplot(data=airT, aes(x=month, y=value)) +
-  geom_bar(stat="identity", width=0.4, fill="black") +
-  theme_classic() +
+  ylim(c(0, 25)) +
+  geom_point(size = .5, stroke = 0) +
+  geom_pointrange(aes(ymin=value-stder, ymax=value+stder)) +
   labs(x="Month", y = expression(paste("Mean Air Temperature (",degree~C,")"))) +
-  ylim(0, 25)
+  theme_classic() +
+  theme(legend.position = "none") 
 dev.off()
