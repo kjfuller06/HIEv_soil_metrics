@@ -70,11 +70,17 @@ soil<-aggregate(data=soil,value~Sp+month+water,FUN=mean)
 soil$month = factor(soil$month, levels = c("Jun", "Jul", "Aug", "Sep", "Oct", "Nov"))
 soil = soil[order(soil$month),]
 soil$group = as.factor(paste0(soil$Sp, soil$water))
+soil2 = soil
+soil2$Sp = as.factor(soil2$Sp)
+levels(soil2$Sp) = c("Bis", "Fes", "Med", "Lol")
+soil2$Sp = factor(soil2$Sp, levels = c("Bis", "Fes", "Lol", "Med"))
+names(soil2)[1] = "Species"
 soil = soil %>% 
    dplyr::select(-Sp,
                  -water) %>% 
    pivot_wider(names_from = group, values_from = value)
 write.csv(soil, "data/MarinhoCatunda_Fig1_soil_final.csv", row.names = FALSE)
+write.csv(soil2, "data/MarinhoCatunda_Fig1_soillong_final.csv", row.names = FALSE)
 
 # plot
 # tiff(file = "Figure1c_soilVWC_permonth.tiff", width =1100, height = 900, units = "px", res = 200)
@@ -100,6 +106,16 @@ Fig1c = ggplot(data=soil, aes(x=month)) +
    theme_classic() +
    ylim(c(min(soil$LUCDrt), max(soil$RYECon) + 2)) +
    geom_text(x="Jun", y= max(soil$RYECon) + 2, label="C)")
+legend = ggplot(data = soil2, aes(x = month, y = value, color = Species, group = Sp)) +
+   geom_line(aes(group = Species), size = 3) +
+   scale_color_manual(values = c("purple", "orange", "yellow", "pink")) +
+   theme_classic()
+library(cowplot)
+library(grid)
+library(gridExtra)
+Fig1c_legend <- cowplot::get_legend(legend)
+grid.newpage()
+grid.draw(Fig1c_legend)
 
 # dev.off()
-rm(backup1, sensors, soil)
+rm(backup1, sensors, soil, soil2, legend)

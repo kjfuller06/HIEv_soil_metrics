@@ -1,7 +1,11 @@
-Fig1a
-Fig1b
-Fig1c
-par(new = TRUE)
-par(mar = c(1, 1, 1, 1))
-plot(NULL)
-legend("topright", lty = 1, lwd = 5, col = c("purple", "orange", "yellow", "pink"), legend = c("Bis", "Fes", "Lol", "Med"), title = "Species", bty = "n")
+library(gridExtra)
+Fig1 = grid.arrange(Fig1a, Fig1b, Fig1c +
+               annotation_custom(
+                 grob = Fig1c_legend,
+                 xmin = "Nov",
+                 xmax = "Nov",
+                 ymin = 13,
+                 ymax = 14
+               ), nrow = 3)
+
+ggsave("MarinhoCatunda_etal_2021_Figure1_permonth.tiff", Fig1, height = 21, width = 14, units = "cm")
