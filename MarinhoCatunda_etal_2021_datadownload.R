@@ -31,7 +31,7 @@ s6$Shelter<-6
 #combine into one DF
 soil<-rbind(s1,s2,s3,s4,s5,s6)
 names(soil)<-c("DateTime","SensorCode","value","Shelter")
-write.csv(Irrig, "data/MarinhoCatunda_Fig1_soil_raw.csv", row.names = FALSE)
+write.csv(soil, "data/MarinhoCatunda_Fig1_soil_raw.csv", row.names = FALSE)
 
 # air temperature ####
 for(i in c(1:6)){
@@ -56,4 +56,5 @@ s6$Shelter<-6
 #combine into one DF
 abv<-rbind(s1,s2,s3,s4,s5,s6)
 names(abv)<-c("DateTime","SensorCode","value","Shelter")
-write.csv(Irrig, "data/MarinhoCatunda_Fig1_AirT_raw.csv", row.names = FALSE)
+write.csv(abv, "data/MarinhoCatunda_Fig1_AirT_raw.csv", row.names = FALSE)
+rm(list = ls())
