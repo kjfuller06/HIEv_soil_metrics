@@ -74,7 +74,7 @@ soil = soil %>%
    dplyr::select(-Sp,
                  -water) %>% 
    pivot_wider(names_from = group, values_from = value)
-write.csv(soil, "data/MarinhoCatunda_Fig1_soil_final.csv")
+write.csv(soil, "data/MarinhoCatunda_Fig1_soil_final.csv", row.names = FALSE)
 
 # plot
 # tiff(file = "Figure1c_soilVWC_permonth.tiff", width =1100, height = 900, units = "px", res = 200)

@@ -21,6 +21,7 @@ airT = airT %>%
                 -Treatment)
 
 # combine
+airT$DateTime = as.POSIXct(airT$DateTime)
 airT$month = format(airT$DateTime, format = "%b")
 airT = airT[order(airT$month),]
 backup = airT
@@ -34,6 +35,7 @@ airT = airT %>%
 airT$month = factor(airT$month, levels = c("Jun", "Jul", "Aug", "Sep", "Oct", "Nov"))
 airT = airT[order(airT$month),]
 airT$name = factor(airT$name, levels = c("maxT", "value", "minT"))
+write.csv(airT, "data/MarinhoCatunda_Fig1_AirT_final.csv",row.names = FALSE)
 
 # plot
 # tiff(file = "Figure1b_AirT_permonth.tiff", width =1100, height = 900, units = "px", res = 200)
@@ -47,5 +49,7 @@ Fig1b = ggplot(data=airT, aes(x=month, y=value, group = name)) +
   theme_classic() +
   theme(legend.position = "none") +
   geom_text(x="Nov", y= (airT$value[18] - 2), label="MAX") +
-  geom_text(x="Nov", y= (airT$value[17] - 2), label="MIN")
+  geom_text(x="Nov", y= (airT$value[17] - 2), label="MIN") +
+  geom_text(x="Jun", y= max(airT$value), label="B)")
 # dev.off()
+rm(abv, airT, backup, sensors, val, sD, eD)
