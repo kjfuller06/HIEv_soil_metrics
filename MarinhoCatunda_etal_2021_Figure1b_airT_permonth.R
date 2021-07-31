@@ -5,6 +5,7 @@ eD<-as.Date("2019-11-30")
 
 #Aboveground data####
 #download data from HIEv and only keep variables of interest
+abv = read.csv("data/MarinhoCatunda_Fig1_AirT_raw.csv")
 sensors<-read.csv("abovegroundsensors.csv")
 abv<-merge(abv,sensors,by=c("Shelter","SensorCode"))
 

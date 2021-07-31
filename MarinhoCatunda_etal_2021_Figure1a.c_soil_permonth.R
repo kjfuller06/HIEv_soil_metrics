@@ -4,6 +4,7 @@ sD<-as.Date("2019-06-01")
 eD<-as.Date("2019-11-30")
 
 #Irrigation####
+Irrig = read.csv("data/MarinhoCatunda_Fig1_Irrig_raw.csv")
 Irrig$Shelter = substr(Irrig$Code,1 ,2)
 Irrig$Plot = paste0("P", substr(Irrig$Code, 4, 4))
 plots = read.csv("PACE_treatment_species_reference.csv")
@@ -35,6 +36,7 @@ rm(Irrig, plots, backup)
 
 #Soil Moisture####
 #download data from HIEv and only keep soil moisture variables of interest
+soil = read.csv("data/MarinhoCatunda_Fig1_soil_raw.csv")
 sensors<-read.csv("soilsensors.csv")
 soil<-merge(soil,sensors,by=c("Shelter","SensorCode"))
 soil = soil %>% 
