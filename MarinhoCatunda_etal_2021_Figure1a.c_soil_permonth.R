@@ -5,12 +5,13 @@ eD<-as.Date("2019-11-30")
 
 #Irrigation####
 Irrig = read.csv("data/MarinhoCatunda_Fig1_Irrig_raw.csv")
-Irrig$Shelter = substr(Irrig$Code,1 ,2)
-Irrig$Plot = paste0("P", substr(Irrig$Code, 4, 4))
+Irrig$Shelter = substr(Irrig$Plot,1 ,2)
+Irrig$Plot = paste0("P", substr(Irrig$Plot, 4, 4))
 plots = read.csv("PACE_treatment_species_reference.csv")
 plots$Shelter = substr(plots$Subplot.ID, 1, 2)
 plots$Plot = substr(plots$Subplot.ID, 3, 4)
 Irrig = left_join(Irrig, plots)
+Irrig$DateTime = as.POSIXct(Irrig$DateTime)
 Irrig$month = format(Irrig$DateTime, format = "%b")
 
 #force Treatment to be a factor
@@ -20,6 +21,7 @@ Irrig<-aggregate(data=Irrig,Irrigation~month+Treatment,FUN=mean)
 
 Irrig$month = factor(Irrig$month, levels = c("Jun", "Jul", "Aug", "Sep", "Oct", "Nov"))
 Irrig = Irrig[order(Irrig$month, Irrig$Treatment),]
+write.csv(Irrig, "data/MarinhoCatunda_Fig1_Irrig_final.csv", row.names = FALSE)
 
 # plot
 # tiff(file = "Figure1a_Irrig_permonth.tiff", width =1100, height = 900, units = "px", res = 200)
@@ -29,10 +31,10 @@ Fig1a = ggplot(data=Irrig, aes(x=month, y=Irrigation, fill=Treatment)) +
    theme_classic() +
    scale_fill_manual(values=c('black','white')) +
    labs(x="Month", y = "Irrigation (mm)") +
-   geom_text(x="Jun", y= max(Irrig$Irrigation), label="Max")
+   geom_text(x="Jun", y= max(Irrig$Irrigation), label="A)")
 
 # dev.off()
-rm(Irrig, plots, backup)
+rm(Irrig, plots)
 
 #Soil Moisture####
 #download data from HIEv and only keep soil moisture variables of interest
@@ -54,6 +56,7 @@ soil<-aggregate(data=soil,value~Shelter+DateTime+Sp+water,FUN=mean)
 #change class of variables
 soil$Sp<-as.factor(soil$Sp)
 soil$Shelter<-as.factor(soil$Shelter)
+soil$DateTime= as.POSIXct(soil$DateTime)
 soil$month = format(soil$DateTime, format = "%b")
 soil = soil[order(soil$DateTime),]
 
@@ -71,6 +74,7 @@ soil = soil %>%
    dplyr::select(-Sp,
                  -water) %>% 
    pivot_wider(names_from = group, values_from = value)
+write.csv(soil, "data/MarinhoCatunda_Fig1_soil_final.csv")
 
 # plot
 # tiff(file = "Figure1c_soilVWC_permonth.tiff", width =1100, height = 900, units = "px", res = 200)
@@ -93,7 +97,9 @@ Fig1c = ggplot(data=soil, aes(x=month)) +
    geom_line(aes(y = RYEDrt, group = 1), colour = "yellow") +
    geom_point(aes(y = RYEDrt, group = 1), colour = "yellow", shape = 5, size = 2) +
    labs(x="Month", y = "Soil Volumetric Water Content (%)") +
-   theme_classic()
+   theme_classic() +
+   ylim(c(min(soil$LUCDrt), max(soil$RYECon) + 2)) +
+   geom_text(x="Jun", y= max(soil$RYECon) + 2, label="C)")
 
 # dev.off()
-rm(backup1, s, s1, s2, s3, s4, s5, s6, sensors, soil)
+rm(backup1, sensors, soil)
