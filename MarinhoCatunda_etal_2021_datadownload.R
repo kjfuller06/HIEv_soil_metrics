@@ -6,7 +6,7 @@ eD<-as.Date("2019-11-30")
 # irrigation ####
 Irrig<- (downloadTOA5("PACE_AUTO_ALL_IRRIG_R_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,4:6)]
 names(Irrig)<-c("DateTime","Plot","Treatment","Irrigation")
-write.csv(Irrig, "MarinhoCatunda_Fig1_Irrig.csv", row.names = FALSE)
+write.csv(Irrig, "data/MarinhoCatunda_Fig1_Irrig_raw.csv", row.names = FALSE)
 
 # soil moisture ####
 for(i in c(1:6)){
@@ -31,7 +31,7 @@ s6$Shelter<-6
 #combine into one DF
 soil<-rbind(s1,s2,s3,s4,s5,s6)
 names(soil)<-c("DateTime","SensorCode","value","Shelter")
-write.csv(Irrig, "MarinhoCatunda_Fig1_soil.csv", row.names = FALSE)
+write.csv(Irrig, "data/MarinhoCatunda_Fig1_soil_raw.csv", row.names = FALSE)
 
 # air temperature ####
 for(i in c(1:6)){
@@ -56,4 +56,4 @@ s6$Shelter<-6
 #combine into one DF
 abv<-rbind(s1,s2,s3,s4,s5,s6)
 names(abv)<-c("DateTime","SensorCode","value","Shelter")
-write.csv(Irrig, "MarinhoCatunda_Fig1_AirT.csv", row.names = FALSE)
+write.csv(Irrig, "data/MarinhoCatunda_Fig1_AirT_raw.csv", row.names = FALSE)
