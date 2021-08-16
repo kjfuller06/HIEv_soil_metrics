@@ -4,88 +4,42 @@ sD<-as.Date("2019-06-01")
 eD<-as.Date("2019-11-30")
 
 #Irrigation####
-Irrig = read.csv("data/MarinhoCatunda_Fig1_Irrig_raw.csv")
-Irrig$Shelter = substr(Irrig$Plot,1 ,2)
-Irrig$Plot = paste0("P", substr(Irrig$Plot, 4, 4))
-plots = read.csv("PACE_treatment_species_reference.csv")
-plots$Shelter = substr(plots$Subplot.ID, 1, 2)
-plots$Plot = substr(plots$Subplot.ID, 3, 4)
-Irrig = left_join(Irrig, plots)
-Irrig$DateTime = as.POSIXct(Irrig$DateTime)
-Irrig$month = format(Irrig$DateTime, format = "%b")
-
-#force Treatment to be a factor
-Irrig$Treatment<-as.factor(Irrig$Treatment)
-levels(Irrig$Treatment)<-c("Control","Drought","Control","Drought")
-Irrig<-aggregate(data=Irrig,Irrigation~month+Treatment,FUN=mean)
-
+Irrig = read.csv("data/MarinhoCatunda_Fig1_Irrig_final.csv")
 Irrig$month = factor(Irrig$month, levels = c("Jun", "Jul", "Aug", "Sep", "Oct", "Nov"))
 Irrig = Irrig[order(Irrig$month, Irrig$Treatment),]
-write.csv(Irrig, "data/MarinhoCatunda_Fig1_Irrig_final.csv", row.names = FALSE)
-
 # plot
 # tiff(file = "Figure1a_Irrig_permonth.tiff", width =1100, height = 900, units = "px", res = 200)
 
 Fig1a = ggplot(data=Irrig, aes(x=month, y=Irrigation, fill=Treatment)) +
    geom_bar(stat="identity", width=0.75, color="black", position=position_dodge())+
    theme_classic() +
+   ylim(c(0, 4)) +
    scale_fill_manual(values=c('black','white')) +
    labs(x="Month", y = "Irrigation (mm)") +
-   geom_text(x="Jun", y= max(Irrig$Irrigation), label="A)")
+   geom_text(x="Jun", y= 4, label="A)") +
+   theme(legend.position = c(0.88, 0.82))
 
 # dev.off()
-rm(Irrig, plots)
+rm(Irrig)
 
 #Soil Moisture####
 #download data from HIEv and only keep soil moisture variables of interest
-soil = read.csv("data/MarinhoCatunda_Fig1_soil_raw.csv")
-sensors<-read.csv("soilsensors.csv")
-soil<-merge(soil,sensors,by=c("Shelter","SensorCode"))
-soil = soil %>% 
-   filter(Position != "Lower" & SensorType == "TDR")
-soil$water<-as.factor(substr(soil$Treatment, 4, 6))
-soil$code = paste0("S", soil$Shelter, "P", soil$Plot)
-soil = soil %>% 
-   dplyr::select(-SensorCode,
-                 -SensorType,
-                 -Treatment,
-                 -Position)
-soil = soil[order(soil$DateTime, soil$Shelter, soil$water),]
-soil<-aggregate(data=soil,value~Shelter+DateTime+Sp+water,FUN=mean)
-
-#change class of variables
-soil$Sp<-as.factor(soil$Sp)
-soil$Shelter<-as.factor(soil$Shelter)
-soil$DateTime= as.POSIXct(soil$DateTime)
-soil$month = format(soil$DateTime, format = "%b")
-soil = soil[order(soil$DateTime),]
-
-#remove NAs
-soil<-na.omit(soil)
-
-#Summarize data
-backup1<-soil
-soil$value = soil$value*100
-soil<-aggregate(data=soil,value~Sp+month+water,FUN=mean)
+soil = read.csv("data/MarinhoCatunda_Fig1_soil_final.csv")
+soil2 = read.csv("data/MarinhoCatunda_Fig1_soillong_final.csv")
 soil$month = factor(soil$month, levels = c("Jun", "Jul", "Aug", "Sep", "Oct", "Nov"))
 soil = soil[order(soil$month),]
-soil$group = as.factor(paste0(soil$Sp, soil$water))
-soil2 = soil
+soil2$month = factor(soil2$month, levels = c("Jun", "Jul", "Aug", "Sep", "Oct", "Nov"))
+soil2 = soil2[order(soil2$month),]
 soil2$Sp = as.factor(soil2$Sp)
 levels(soil2$Sp) = c("Bis", "Fes", "Med", "Lol")
 soil2$Sp = factor(soil2$Sp, levels = c("Bis", "Fes", "Lol", "Med"))
 names(soil2)[1] = "Species"
-soil = soil %>% 
-   dplyr::select(-Sp,
-                 -water) %>% 
-   pivot_wider(names_from = group, values_from = value)
-write.csv(soil, "data/MarinhoCatunda_Fig1_soil_final.csv", row.names = FALSE)
-write.csv(soil2, "data/MarinhoCatunda_Fig1_soillong_final.csv", row.names = FALSE)
 
 # plot
 # tiff(file = "Figure1c_soilVWC_permonth.tiff", width =1100, height = 900, units = "px", res = 200)
 
-Fig1c = ggplot(data=soil, aes(x=month)) +
+Fig1c = 
+   ggplot(data=soil, aes(x=month)) +
    geom_line(aes(y = BISCon, group = 1), colour = "purple") +
    geom_point(aes(y = BISCon, group = 1), colour = "purple", shape = 19, size = 2) +
    geom_line(aes(y = BISDrt, group = 1), colour = "purple") +
@@ -118,4 +72,4 @@ grid.newpage()
 grid.draw(Fig1c_legend)
 
 # dev.off()
-rm(backup1, sensors, soil, soil2, legend)
+rm(soil, soil2, legend)

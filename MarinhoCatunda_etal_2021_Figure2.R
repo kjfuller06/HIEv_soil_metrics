@@ -1,7 +1,5 @@
-#this code fits with all Churchilletal2020_Figure2 files: surfacetemp_datadownloadandprocessing, raw_surface_temperature_plots, soil_data_downloadandprocessing, raw_soil_moisture_plots and comparative_soil_moisture_plots scripts. Continues on to put the four plots from these scripts together for a publication- Fescue raw and comparative soil moisture and surface temperature extremes for the facility
-
 #multipanel
-tiff(file = "MarinhoCatunda_etal_2021_Figure2.tiff", width =1100, height = 1400, units = "px", res = 200)
+tiff(file = "MarinhoCatunda_etal_2021_Figure2.tiff", width =2200, height = 2800, units = "px", res = 400)
 
 ## 2a - Fescue ####
 #calculate max and min values for ylim, remove NAs
@@ -22,14 +20,15 @@ with(rFES[[1]],plot(value ~ Date,
                     cex.axis=0.65))
 mtext(side=2,"Soil Volumetric\nWater Content (%)",padj=-1.5,cex=.5)
 mtext(side=2,"A)",line=3.5,cex=0.9,las=2)
-with(rFES[[3]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.65),border=NA))
+with(rFES[[3]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.65),border=NA))
 with(rFES[[3]],points(value ~ Date, type = "l",col=1,lwd=0.75))
 with(rFES[[1]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("blue",alpha.f=0.65),border=NA))
 with(rFES[[1]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=1))
-with(rFES[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.65),border=NA))
+with(rFES[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.65),border=NA))
 with(rFES[[4]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
 with(rFES[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.85),border=NA))
 with(rFES[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+text("Tall Fescue", x = min(rFES[[1]]$Date), y = ymax+5, adj = 0)
 
 #Irrigation plot
 par(new=TRUE)
@@ -71,15 +70,16 @@ with(rLUC[[1]],plot(value ~ Date,
                     xaxt='n',
                     cex.axis=0.65))
 mtext(side=2,"Soil Volumetric\nWater Content (%)",padj=-1.5,cex=.5)
-mtext(side=2,"A)",line=3.5,cex=0.9,las=2)
-with(rLUC[[3]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.65),border=NA))
+mtext(side=2,"B)",line=3.5,cex=0.9,las=2)
+with(rLUC[[3]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.65),border=NA))
 with(rLUC[[3]],points(value ~ Date, type = "l",col=1,lwd=0.75))
 with(rLUC[[1]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("blue",alpha.f=0.65),border=NA))
 with(rLUC[[1]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=1))
-with(rLUC[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.65),border=NA))
+with(rLUC[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.65),border=NA))
 with(rLUC[[4]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
 with(rLUC[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.85),border=NA))
 with(rLUC[[2]],points(value ~ Date, type = "l",col=1,lwd=0.75,lty=2))
+text("Lucerne", x = min(rLUC[[1]]$Date), y = ymax+5, adj = 0)
 
 #Irrigation plot
 par(new=TRUE)
@@ -124,9 +124,9 @@ with(max[[1]],plot(maxT ~ Date,
 mtext(side=2,expression(paste("Temperature (",degree~C,")")),padj=-3,cex=.5)
 mtext(side=2,"C)",line=3.5,cex=0.9,las=2)
 # with(max[[3]],polygon(c(Date,rev(Date)),c(maxT[,3],rev(maxT[,2])),col=adjustcolor("red",alpha.f=0.65),border=NA))
-with(max[[3]],points(maxT ~ Date, type = "l",col="red"))
+with(max[[3]],points(maxT ~ Date, type = "l",col="red4"))
 # with(max[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.65),border=NA))
-with(max[[4]],points(maxT ~ Date, type = "l",col="red4",lty=2))
+with(max[[4]],points(maxT ~ Date, type = "l",col="red",lty=2))
 # with(max[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.85),border=NA))
 with(max[[2]],points(maxT ~ Date, type = "l",col="lightskyblue",lty=2))
 with(airT,points(maxT~Date,type="l"))
@@ -150,13 +150,14 @@ with(min[[1]],plot(minT ~ Date,
                    ylab="",
                    xlab="",
                    col="blue",
-                   xaxt = 'n'))
+                   xaxt = 'n',
+                   cex.axis=0.65))
 mtext(side=2,expression(paste("Temperature (",degree~C,")")),padj=-3,cex=.5)
 mtext(side=2,"D)",line=3.5,cex=0.9,las=2)
 # with(min[[3]],polygon(c(Date,rev(Date)),c(minT[,3],rev(minT[,2])),col=adjustcolor("red",alpha.f=0.65),border=NA))
-with(min[[3]],points(minT ~ Date, type = "l",col="red"))
+with(min[[3]],points(minT ~ Date, type = "l",col="red4"))
 # with(min[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.65),border=NA))
-with(min[[4]],points(minT ~ Date, type = "l",col="red4",lty=2))
+with(min[[4]],points(minT ~ Date, type = "l",col="red",lty=2))
 # with(min[[2]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("lightskyblue",alpha.f=0.85),border=NA))
 with(min[[2]],points(minT ~ Date, type = "l",col="lightskyblue",lty=2))
 with(airT,points(minT~Date,type="l"))
