@@ -25,7 +25,7 @@ with(rFES[[1]],plot(value ~ Date,
                     xaxt='n',
                     cex.axis=1.25))
 mtext(side=2,"Soil Volumetric\nWater Content (%)",padj=-1.3,cex=.75)
-mtext(side=2,"A)",line=4.35,cex=1,las=2)
+mtext(side=2,bold("(A)"),line=4.35,cex=1,las=2)
 with(rFES[[3]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.65),border=NA))
 with(rFES[[3]],points(value ~ Date, type = "l",col=1,lwd=0.75))
 with(rFES[[1]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("blue",alpha.f=0.65),border=NA))
@@ -74,7 +74,7 @@ with(CFES[[2]],plot(value ~ Date,
                     xaxt='n',
                     cex.axis=1.25))
 mtext(side=2,"Relative Soil Volumetric\nWater Content (%)",padj=-1.3,cex=.75)
-mtext(side=2,"B)",line=4.35,cex=1,las=2)
+mtext(side=2,bold("(B)"),line=4.35,cex=1,las=2)
 with(CFES[[3]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red",alpha.f=0.65),border=NA))
 with(CFES[[3]],points(value ~ Date, type = "l",col=1,lwd=0.75))
 with(CFES[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.65),border=NA))
@@ -128,7 +128,7 @@ with(max[[1]],plot(maxT ~ Date,
                    xaxt='n',
                    cex.axis=1.25))
 mtext(side=2,expression(paste("Temperature (",degree~C,")")),padj=-3,cex=.75)
-mtext(side=2,"C)",line=4.35,cex=1,las=2)
+mtext(side=2,bold("(C)"),line=4.35,cex=1,las=2)
 # with(max[[3]],polygon(c(Date,rev(Date)),c(maxT[,3],rev(maxT[,2])),col=adjustcolor("red",alpha.f=0.65),border=NA))
 with(max[[3]],points(maxT ~ Date, type = "l",col="red"))
 # with(max[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.65),border=NA))
@@ -158,7 +158,7 @@ with(min[[1]],plot(minT ~ Date,
                    col="blue",
                    cex.axis=1.25))
 mtext(side=2,expression(paste("Temperature (",degree~C,")")),padj=-3,cex=.75)
-mtext(side=2,"D)",line=4.35,cex=1,las=2)
+mtext(side=2,bold("(D)"),line=4.35,cex=1,las=2)
 # with(min[[3]],polygon(c(Date,rev(Date)),c(minT[,3],rev(minT[,2])),col=adjustcolor("red",alpha.f=0.65),border=NA))
 with(min[[3]],points(minT ~ Date, type = "l",col="red"))
 # with(min[[4]],polygon(c(Date,rev(Date)),c(lower,rev(upper)),col=adjustcolor("red4",alpha.f=0.65),border=NA))
