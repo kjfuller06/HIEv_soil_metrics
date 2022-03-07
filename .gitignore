@@ -3,8 +3,11 @@
 .RData
 .Ruserdata
 /data
-*.tif
-*.tiff
-*.docx
-*.pptx
-*.pdf
+**/*.tif
+**/*.tiff
+**/*.docx
+**/*.pptx
+**/*.pdf
+**/*.dat
+**/*package_prep.R
+write-test-506e82ae-2a77-4f1b-93e2-857199296abd
