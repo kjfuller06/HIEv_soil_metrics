@@ -15,7 +15,7 @@ Fig1a = ggplot(data=Irrig, aes(x=month, y=Irrigation, fill=Treatment)) +
    theme_classic() +
    ylim(c(0, 4)) +
    scale_fill_manual(values=c('black','white')) +
-   labs(x="Month", y = "Irrigation (mm)") +
+   labs(x="Month", y = expression("Irrigation (mm day"^"-1"*")")) +
    geom_text(x="Jun", y= 4, label="A)") +
    theme(legend.position = c(0.88, 0.82))
 
