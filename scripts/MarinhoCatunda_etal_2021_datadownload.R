@@ -313,3 +313,24 @@ backup4<-surf
 surf2<-merge(as.data.frame(surf[[1]]),as.data.frame(surf[[2]]),by=c("Date","Treatment"))
 surf<-merge(surf2,as.data.frame(surf[[3]]),by=c("Date","Treatment"))
 write.csv(surf, "data/MarinhoCatunda_Fig2_surfT_final.csv")
+
+# weather station rain gauge through the HIEv package ####
+searchHIEv(filename=c("ROS_WS"))
+
+#start date
+sD<-as.Date("2018-01-01")
+#end date
+eD<-as.Date("2018-12-31")
+ROSrain<- (downloadTOA5("ROS_WS_Table15min_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,15,3)]
+head(ROSrain)
+rain18 = sum(ROSrain$Rain_mm_Tot)
+rain18
+
+#start date
+sD<-as.Date("2019-01-01")
+#end date
+eD<-as.Date("2019-12-31")
+ROSrain<- (downloadTOA5("ROS_WS_Table15min_", startDate=sD, endDate=eD, keepFiles=FALSE))[,c(1,15,3)]
+head(ROSrain)
+rain19 = sum(ROSrain$Rain_mm_Tot)
+rain19
